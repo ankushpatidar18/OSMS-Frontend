@@ -5,6 +5,8 @@ import About from './landing_page_components/About';
 import Admission from './landing_page_components/Admission';
 import Features from './landing_page_components/Features';
 import AppLayout from './AppLayout';
+import AdminDashboard from './AdminDashboard';
+import AdminLoginForm from './AdminLoginForm';
 
 const Main = () => {
     const appRouter = createBrowserRouter([
@@ -23,6 +25,14 @@ const Main = () => {
               )
 
               },
+              {
+                path : "/admin/dashboard",
+                element: <AdminDashboard />
+              },
+              {
+                path: "/admin/login",
+                element: <AdminLoginForm />
+              }
           ]
       }
   ]);
