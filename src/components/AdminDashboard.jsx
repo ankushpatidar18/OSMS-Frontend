@@ -1,11 +1,12 @@
 import React from 'react'
 import UploadStudents from './uploadStudents'
+import SelectClass from './SelectClass'
 
 const AdminDashboard = () => {
   return (
     <div>
-       <h1 className="text-2xl font-bold">Welcome to the Admin Dashboard</h1>
        <UploadStudents />
+       <SelectClass/>
     </div>
   )
 }

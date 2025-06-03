@@ -1,0 +1,278 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  getSchedules, 
+  addSchedule, 
+  editSchedule, 
+  deleteSchedule, 
+  getExams 
+} from '../utils/api';
+
+
+export default function ExamScheduleManager({ className }) {
+  const [exams, setExams] = useState([]);
+  const [selectedExam, setSelectedExam] = useState('');
+  const [schedules, setSchedules] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [form, setForm] = useState({
+    subject_id: '',
+    exam_date: '',
+    exam_day: 'Monday',
+    exam_time: '09:00'
+  });
+  const [editId, setEditId] = useState(null);
+
+  // Reusable reset function
+  const resetForm = () => {
+    setForm({
+      subject_id: '',
+      exam_date: '',
+      exam_day: 'Monday',
+      exam_time: '09:00'
+    });
+    setEditId(null);
+  };
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      setIsLoading(true);
+      try {
+        const [examsRes, subjectsRes] = await Promise.all([
+          getExams(),
+          fetch('http://localhost:5000/api/subjects').then(res => {
+            if (!res.ok) throw new Error('Failed to fetch subjects');
+            return res.json();
+          })
+        ]);
+        setExams(examsRes.data);
+        setSubjects(subjectsRes);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchInitialData();
+  }, []);
+
+  useEffect(() => {
+    const fetchSchedules = async () => {
+      if (selectedExam) {
+        setIsLoading(true);
+        try {
+          const res = await getSchedules(className, selectedExam);
+          setSchedules(res.data);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchSchedules();
+  }, [selectedExam, className]);
+
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    setError(null);
+    if (!form.subject_id || !form.exam_date) {
+      setError('Please fill all required fields');
+      return;
+    }
+    try {
+      if (editId) {
+        await editSchedule({ schedule_id: editId, ...form });
+      } else {
+        await addSchedule({
+          exam_id: selectedExam,
+          class_name: className,
+          ...form
+        });
+      }
+      const res = await getSchedules(className, selectedExam);
+      setSchedules(res.data);
+      resetForm();
+    } catch (err) {
+      setError(err.message || 'Operation failed');
+    }
+  };
+
+  const handleEdit = schedule => {
+    setEditId(schedule.schedule_id);
+    setForm({
+      subject_id: schedule.subject_id,
+      exam_date: schedule.exam_date.slice(0, 10),
+      exam_day: schedule.exam_day,
+      exam_time: schedule.exam_time
+    });
+  };
+
+  const handleDelete = async id => {
+    if (!window.confirm('Are you sure you want to delete this schedule?')) return;
+    try {
+      await deleteSchedule(id);
+      const res = await getSchedules(className, selectedExam);
+      setSchedules(res.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  if (isLoading) return <div className="p-4 text-center">Loading...</div>;
+  if (error) return <div className="p-4 text-red-500">{error}</div>;
+
+  return (
+    <div className="p-4 bg-white rounded shadow mt-4 mb-4">
+      <h3 className="text-lg font-bold mb-2">Manage Exam Schedule</h3>
+      
+      <div className="mb-4">
+        <label className="block mb-2 font-medium">
+          Select Exam:
+          <select
+            className="border p-2 rounded w-full mt-1"
+            value={selectedExam}
+            onChange={e => setSelectedExam(e.target.value)}
+            aria-label="Select exam"
+          >
+            <option value="">Choose an exam</option>
+            {exams.map(e => (
+              <option key={e.exam_id} value={e.exam_id}>
+                {e.name} ({e.session})
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      {selectedExam && (
+        <>
+          <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 mb-4">
+            <div className="flex-1 min-w-[200px]">
+              <label className="block mb-1 font-medium">
+                Subject:
+                <select
+                  name="subject_id"
+                  value={form.subject_id}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                  required
+                  aria-label="Select subject"
+                >
+                  <option value="">Choose subject</option>
+                  {subjects.map(s => (
+                    <option key={s.subject_id} value={s.subject_id}>
+                      {s.subject_name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="flex-1 min-w-[150px]">
+              <label className="block mb-1 font-medium">
+                Date:
+                <input
+                  type="date"
+                  name="exam_date"
+                  value={form.exam_date}
+                  onChange={handleChange}
+                  className="border p-2 rounded w-full"
+                  required
+                />
+              </label>
+            </div>
+            <div className="flex-1 min-w-[120px]">
+              <label className="block mb-1 font-medium">
+                Day:
+                <input
+                  type="text"
+                  name="exam_day"
+                  value={form.exam_day}
+                  onChange={handleChange}
+                  placeholder="Day"
+                  className="border p-2 rounded w-full"
+                  required
+                />
+              </label>
+            </div>
+            <div className="flex-1 min-w-[120px]">
+              <label className="block mb-1 font-medium">
+                Time:
+                <input
+                  type="text"
+                  name="exam_time"
+                  value={form.exam_time}
+                  onChange={handleChange}
+                  placeholder="Time"
+                  className="border p-2 rounded w-full"
+                  required
+                />
+              </label>
+            </div>
+            <div className="flex gap-2 items-end">
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                aria-label={editId ? 'Update schedule' : 'Add schedule'}
+              >
+                {editId ? 'Update' : 'Add'}
+              </button>
+              {editId && (
+                <button
+                  type="button"
+                  className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+                  onClick={resetForm}
+                  aria-label="Cancel edit"
+                >
+                  Cancel
+                </button>
+              )}
+            </div>
+          </form>
+
+          {/* Schedules Table */}
+          <table className="w-full mt-2 border">
+            <thead>
+              <tr>
+                <th className="border p-1">Subject</th>
+                <th className="border p-1">Date</th>
+                <th className="border p-1">Day</th>
+                <th className="border p-1">Time</th>
+                <th className="border p-1">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {schedules.map(s => (
+                <tr key={s.schedule_id}>
+                  <td className="border p-1">{s.subject_name}</td>
+                  <td className="border p-1">{s.exam_date.slice(0, 10)}</td>
+                  <td className="border p-1">{s.exam_day}</td>
+                  <td className="border p-1">{s.exam_time}</td>
+                  <td className="border p-1">
+                    <button
+                      className="bg-yellow-400 hover:bg-yellow-500 text-white px-2 py-1 rounded mr-2"
+                      onClick={() => handleEdit(s)}
+                    >Edit</button>
+                    <button
+                      className="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded"
+                      onClick={() => handleDelete(s.schedule_id)}
+                    >Delete</button>
+                  </td>
+                </tr>
+              ))}
+              {schedules.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="text-center p-2">No schedules found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </>
+      )}
+    </div>
+  );
+}
