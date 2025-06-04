@@ -42,7 +42,7 @@ export default function AdmitCardPreview({ data }) {
       if (idx > 0) doc.addPage();
 
       // Logo
-      doc.addImage(SCHOOL_LOGO, 'PNG', 18, 11, 36, 30);
+      doc.addImage(SCHOOL_LOGO, 'PNG', 18, 11, 48, 40);
 
       // School name and location
       doc.setFontSize(20);
@@ -59,7 +59,7 @@ export default function AdmitCardPreview({ data }) {
       doc.text(`${exam.name} Examination ${exam.session}`, 109, 47, { align: 'center' });
 
       // Student info
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont(undefined, 'normal');
       doc.text(`NAME: ${student.name}`, 17, 60);
       doc.text(`FATHER'S NAME: ${student.father_name}`, 17, 70);
@@ -104,7 +104,8 @@ export default function AdmitCardPreview({ data }) {
       doc.setFontSize(11);
       doc.setFont(undefined, 'bold');
       doc.text('Instructions:', 15, tableY + 15);
-
+      
+      doc.setFontSize(10);
       doc.setFont(undefined, 'normal');
       INSTRUCTIONS.forEach((instr, i) => {
         doc.text(`${i + 1}. ${instr}`, 20, tableY + 21 + i * 6);
@@ -114,7 +115,7 @@ export default function AdmitCardPreview({ data }) {
       const instructionsEndY = tableY + 21 + (INSTRUCTIONS.length * 6);
       doc.setFontSize(12);
       doc.setFont(undefined, 'bold');
-      doc.text('Principal', 170, instructionsEndY + 15, { align: 'center' });
+      doc.text('Principal', 170, instructionsEndY + 25, { align: 'center' });
 
       // Borders and lines for neatness
       doc.setLineWidth(0.2);

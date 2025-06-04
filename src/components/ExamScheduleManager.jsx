@@ -19,7 +19,7 @@ export default function ExamScheduleManager({ className }) {
     subject_id: '',
     exam_date: '',
     exam_day: 'Monday',
-    exam_time: '09:00'
+    exam_time: '09:00 to 12:00'
   });
   const [editId, setEditId] = useState(null);
 
@@ -29,7 +29,7 @@ export default function ExamScheduleManager({ className }) {
       subject_id: '',
       exam_date: '',
       exam_day: 'Monday',
-      exam_time: '09:00'
+      exam_time: '09:00 to 12:00'
     });
     setEditId(null);
   };
