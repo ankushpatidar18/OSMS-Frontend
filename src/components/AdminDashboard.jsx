@@ -19,7 +19,7 @@ const AdminDashboard = () => {
             `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
           }
         >
-          Select Class
+          Admit Card
         </NavLink>
         <NavLink
           to="students"
@@ -28,6 +28,22 @@ const AdminDashboard = () => {
           }
         >
           Students
+        </NavLink>
+        <NavLink
+          to="marksheet"
+          className={({ isActive }) =>
+            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+          }
+        >
+          Marksheet
+        </NavLink>
+        <NavLink
+          to="mark-entry"
+          className={({ isActive }) =>
+            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+          }
+        >
+          MarksEntry
         </NavLink>
         {/* Add more menu items here */}
       </div>

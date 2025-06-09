@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAdminInfo } from "@/redux/slices/adminSlice";
 
@@ -29,7 +29,7 @@ export default function Header() {
       //have to put url into .env file
       const res = await fetch("http://localhost:5000/api/admin/logout", {
         method: "POST",
-        credentials: "include", // important to send cookies
+        credentials: "include", 
       });
 
       if (res.ok) {
@@ -58,13 +58,25 @@ export default function Header() {
               <p className="text-xs text-gray-600">Excellence in Education</p>
             </div>
           </div>
-
+          
           <div className="hidden md:flex items-center space-x-6">
-            <a href="#home" className="text-gray-700 hover:text-blue-600">Home</a>
-            <a href="#about" className="text-gray-700 hover:text-blue-600">About</a>
-            <a href="#admission" className="text-gray-700 hover:text-blue-600">Admission</a>
-            <a href="#academics" className="text-gray-700 hover:text-blue-600">Academics</a>
-            <a href="#facilities" className="text-gray-700 hover:text-blue-600">Facilities</a>
+            //have to convert into anchor tags because of same page navigation
+            <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
+            <Link to="/#about" className="text-gray-700 hover:text-blue-600">About</Link>
+            <Link to="/#admission" className="text-gray-700 hover:text-blue-600">Admission</Link>
+            <Link to="/#facilities" className="text-gray-700 hover:text-blue-600">Facilities</Link>
+            {/* Conditionally render Dashboard or Academics */}
+            {!admin ? (
+              <Link to="/#academics" className="text-gray-700 hover:text-blue-600">Academics</Link>
+            ) : (
+              <Link
+                to="/admin/dashboard"
+                className="text-gray-700 hover:text-blue-600"
+                style={{ textDecoration: "none" }}
+              >
+                Dashboard
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center space-x-3 relative" ref={dropdownRef}>

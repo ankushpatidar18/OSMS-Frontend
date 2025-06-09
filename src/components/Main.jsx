@@ -9,6 +9,12 @@ import AdminLoginForm from "./AdminLoginForm";
 import UploadStudents from "./UploadStudents";
 import SelectClass from "./SelectClass";
 import Students from "./Students";
+import MarksheetGenerator from "./MarksheetGenerator";
+import MarkEntryPage from "./MarkEntryPage";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setAdminChecked, setAdminInfo } from "@/redux/slices/adminSlice";
+import RequireAdmin from "./RequireAdmin";
 
 const appRouter = createBrowserRouter([
   {
@@ -32,7 +38,10 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "/admin/dashboard",
-        element: <AdminDashboard />,
+        element: (
+          <RequireAdmin>
+        <AdminDashboard />
+        </RequireAdmin>),
         children: [
           {
             path: "upload-students",
@@ -46,6 +55,14 @@ const appRouter = createBrowserRouter([
             path: "students",
             element: <Students />,
           },
+          {
+            path: "marksheet",
+            element: <MarksheetGenerator />,
+          },
+          {
+            path:"mark-entry",
+            element: <MarkEntryPage/>
+          }
         ],
       },
     ],
@@ -53,6 +70,25 @@ const appRouter = createBrowserRouter([
 ]);
 
 const Main = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+  fetch("http://localhost:5000/api/admin/me", {
+    credentials: "include",
+  })
+    .then(res => res.ok ? res.json() : null)
+    .then(data => {
+      if (data && data.admin) {
+        dispatch(setAdminInfo(data.admin));
+      } else {
+        dispatch(setAdminChecked(true)); 
+      }
+    })
+    .catch(() => {
+      dispatch(setAdminChecked(true));
+    });
+}, [dispatch]);
+
   return <RouterProvider router={appRouter} />;
 };
 
