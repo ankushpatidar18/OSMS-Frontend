@@ -19,7 +19,7 @@ export default function SubjectExamSelector({
           <option value="">Select a subject</option>
           {(subjects || []).map(subject => (
             <option key={subject.class_subject_id} value={subject.class_subject_id}>
-              {subject.subject_name} (Max: {subject.max_marks})
+              {subject.subject_name} 
             </option>
           ))}
         </select>
@@ -34,7 +34,7 @@ export default function SubjectExamSelector({
           <option value="">Select an exam</option>
           {(exams || []).map(exam => (
             <option key={exam.exam_id} value={exam.exam_id}>
-              {exam.name} ({exam.weightage}%)
+              {exam.name} (Max : {exam.total_marks})
             </option>
           ))}
         </select>

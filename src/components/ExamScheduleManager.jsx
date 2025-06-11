@@ -142,7 +142,7 @@ export default function ExamScheduleManager({ className }) {
             <option value="">Choose an exam</option>
             {exams.map(e => (
               <option key={e.exam_id} value={e.exam_id}>
-                {e.name} ({e.session})
+                {e.name} ({e.session}){e.class_group}
               </option>
             ))}
           </select>

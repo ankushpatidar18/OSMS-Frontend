@@ -60,7 +60,7 @@ export default function Header() {
           </div>
           
           <div className="hidden md:flex items-center space-x-6">
-            //have to convert into anchor tags because of same page navigation
+            {/* have to convert into anchor tags because of same page navigation */}
             <Link to="/" className="text-gray-700 hover:text-blue-600">Home</Link>
             <Link to="/#about" className="text-gray-700 hover:text-blue-600">About</Link>
             <Link to="/#admission" className="text-gray-700 hover:text-blue-600">Admission</Link>
