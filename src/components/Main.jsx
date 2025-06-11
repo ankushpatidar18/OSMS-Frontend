@@ -62,6 +62,13 @@ const appRouter = createBrowserRouter([
           {
             path:"mark-entry",
             element: <MarkEntryPage/>
+          },{
+            path: "add-student",
+            element: <UploadStudents isAddStudent={true} />,//have to change
+          },
+          {
+            path: "remove-student",
+            element: <UploadStudents isRemoveStudent={true} />, //have to change
           }
         ],
       },

@@ -45,6 +45,22 @@ const AdminDashboard = () => {
         >
           MarksEntry
         </NavLink>
+        <NavLink
+          to="add-student"
+          className={({ isActive }) =>
+            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+          }
+        >
+          Add Student
+        </NavLink>
+        <NavLink
+          to="remove-student"
+          className={({ isActive }) =>
+            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+          }
+        >
+          Remove Student
+        </NavLink>
         {/* Add more menu items here */}
       </div>
 

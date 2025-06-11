@@ -11,7 +11,7 @@ const Students = () => {
   const [filters, setFilters] = useState({
     name: "",
     class: "",
-    role: "",
+    roll_number: "",
   })
   const [isExpanded, setIsExpanded] = useState({}) 
 
@@ -24,7 +24,7 @@ const Students = () => {
       const queryParams = new URLSearchParams()
       if (filters.name) queryParams.append("name", filters.name)
       if (filters.class) queryParams.append("class", filters.class)
-      if (filters.role) queryParams.append("role", filters.role)
+      if (filters.roll_number) queryParams.append("roll_number", filters.roll_number)
 
       const response = await fetch(`http://localhost:5000/api/students?${queryParams}`)
       const data = await response.json()
@@ -53,7 +53,7 @@ const Students = () => {
 
   // Clear filters
   const clearFilters = () => {
-    setFilters({ name: "", class: "", role: "" })
+    setFilters({ name: "", class: "", roll_number: "" })
     setTimeout(() => fetchStudents(), 100)
   }
 
@@ -90,7 +90,7 @@ const Students = () => {
       session: student.session || "",
       is_repeater: student.is_repeater || 0,
       mobile_number: student.mobile_number || "",
-      role: student.role || "",
+      roll_number: student.roll_number || "",
       father_name: student.father_name || "",
       mother_name: student.mother_name || "",
       admission_no: student.admission_no || "",
@@ -192,8 +192,8 @@ const Students = () => {
                 <label className="block text-sm font-semibold text-gray-700">Roll Number</label>
                 <input
                   type="text"
-                  value={filters.role}
-                  onChange={(e) => handleFilterChange("role", e.target.value)}
+                  value={filters.roll_number}
+                  onChange={(e) => handleFilterChange("roll_number", e.target.value)}
                   placeholder="Search by roll number..."
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
                 />
@@ -291,8 +291,8 @@ const Students = () => {
                                     </select>
                                     <input
                                       type="text"
-                                      value={editData.role}
-                                      onChange={(e) => handleEditChange("role", e.target.value)}
+                                      value={editData.roll_number}
+                                      onChange={(e) => handleEditChange("roll_number", e.target.value)}
                                       className="px-3 py-1 border border-gray-300 rounded-full text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
                                       placeholder="Roll No"
                                       required
@@ -304,7 +304,7 @@ const Students = () => {
                                       Class {student.class || "-"}
                                     </span>
                                     <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">
-                                      Roll: {student.role || "-"}
+                                      Roll: {student.roll_number || "-"}
                                     </span>
                                   </>
                                 )}

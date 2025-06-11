@@ -68,7 +68,7 @@ export default function AdmitCardPreview({ data }) {
       doc.setFontSize(12);
       doc.setFont(undefined, 'bold');
       doc.text(`Class: ${student.class}`, 31, 80, { align: 'right' });
-      doc.text(`Roll No: ${student.role}`, 195, 80, { align: 'right' });
+      doc.text(`Roll No: ${student.roll_number}`, 195, 80, { align: 'right' });
 
       // Exam Schedule Table
       autoTable(doc, {
