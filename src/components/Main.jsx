@@ -15,6 +15,8 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setAdminChecked, setAdminInfo } from "@/redux/slices/adminSlice";
 import RequireAdmin from "./RequireAdmin";
+import AddStudentForm from "./AddStudentForm";
+import DeleteStudents from "./DeleteStudents";
 
 const appRouter = createBrowserRouter([
   {
@@ -64,11 +66,11 @@ const appRouter = createBrowserRouter([
             element: <MarkEntryPage/>
           },{
             path: "add-student",
-            element: <UploadStudents isAddStudent={true} />,//have to change
+            element: <AddStudentForm />,
           },
           {
-            path: "remove-student",
-            element: <UploadStudents isRemoveStudent={true} />, //have to change
+            path: "delete-student",
+            element: <DeleteStudents />, 
           }
         ],
       },

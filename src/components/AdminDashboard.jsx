@@ -2,13 +2,18 @@ import { NavLink, Outlet } from "react-router-dom";
 
 const AdminDashboard = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col md:flex-row min-h-screen font-sans">
       {/* Sidebar */}
-      <div className="w-64 bg-white text-black p-4 space-y-4">
+      <div className="w-full md:w-64 bg-white text-gray-900 p-6 shadow-lg">
+        
         <NavLink
           to="upload-students"
           className={({ isActive }) =>
-            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
           }
         >
           Upload Students
@@ -16,7 +21,11 @@ const AdminDashboard = () => {
         <NavLink
           to="select-class"
           className={({ isActive }) =>
-            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
           }
         >
           Admit Card
@@ -24,7 +33,11 @@ const AdminDashboard = () => {
         <NavLink
           to="students"
           className={({ isActive }) =>
-            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
           }
         >
           Students
@@ -32,7 +45,11 @@ const AdminDashboard = () => {
         <NavLink
           to="marksheet"
           className={({ isActive }) =>
-            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
           }
         >
           Marksheet
@@ -40,7 +57,11 @@ const AdminDashboard = () => {
         <NavLink
           to="mark-entry"
           className={({ isActive }) =>
-            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
           }
         >
           MarksEntry
@@ -48,24 +69,31 @@ const AdminDashboard = () => {
         <NavLink
           to="add-student"
           className={({ isActive }) =>
-            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
           }
         >
           Add Student
         </NavLink>
         <NavLink
-          to="remove-student"
+          to="delete-student"
           className={({ isActive }) =>
-            `block p-2 rounded ${isActive ? "bg-gray-100" : "hover:bg-gray-100"}`
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
           }
         >
-          Remove Student
+          Delete Student
         </NavLink>
-        {/* Add more menu items here */}
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 p-4 bg-gray-100">
+      <div className="flex-1 p-6 bg-gray-50">
         <Outlet />
       </div>
     </div>
