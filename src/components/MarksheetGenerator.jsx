@@ -334,22 +334,32 @@ const generatePDF = () => {
     
     // Subject table
     const tableY = 123;
-    let headers;
-    if(selectedClass=='6' || selectedClass=='7' || selectedClass=='8'){
-      headers = [
+    const isMiddleClass = selectedClass === '6' || selectedClass === '7' || selectedClass === '8';
+
+const headers = isMiddleClass
+  ? [
       'SUBJECT', 'MAXIMUM\nMARKS', 'ANNUAL\nEXAM (60)', 'HALF YEARLY\nEXAM (20)', 
       'PROJECT\n(20)', 'TOTAL', 'GRADE'
-    ];
-}else{
-      headers = [
+    ]
+  : [
       'SUBJECT', 'MAXIMUM\nMARKS', 'ANNUAL\nEXAM (60)', 'HALF YEARLY\nEXAM (20)', 
       'MONTHLY\nTEST (10)', 'PROJECT\n(10)', 'TOTAL', 'GRADE'
     ];
 
-}
-    
-    
-    const rows = student.subjects.map(subject => [
+// Build rows dynamically based on class group
+const rows = student.subjects.map(subject => {
+  if (isMiddleClass) {
+    return [
+      subject.name,
+      subject.maxMarks.toString(),
+      subject.annualExam.toString(),
+      subject.halfYearly.toString(),
+      subject.project.toString(),
+      subject.total.toString(),
+      subject.grade
+    ];
+  } else {
+    return [
       subject.name,
       subject.maxMarks.toString(),
       subject.annualExam.toString(),
@@ -358,10 +368,22 @@ const generatePDF = () => {
       subject.project.toString(),
       subject.total.toString(),
       subject.grade
-    ]);
-    
-    // Add total row
-    const totalRow = [
+    ];
+  }
+});
+
+// Add total row
+const totalRow = isMiddleClass
+  ? [
+      'TOTAL',
+      student.totalMarks.toString(),
+      student.subjects.reduce((sum, subject) => sum + (subject.annualExam || 0), 0).toString(),
+      student.subjects.reduce((sum, subject) => sum + (subject.halfYearly || 0), 0).toString(),
+      student.subjects.reduce((sum, subject) => sum + (subject.project || 0), 0).toString(),
+      student.obtainedMarks.toString(),
+      student.totalGrade
+    ]
+  : [
       'TOTAL',
       student.totalMarks.toString(),
       student.subjects.reduce((sum, subject) => sum + (subject.annualExam || 0), 0).toString(),
@@ -371,46 +393,44 @@ const generatePDF = () => {
       student.obtainedMarks.toString(),
       student.totalGrade
     ];
-    
-    rows.push(totalRow);
-    
-    autoTable(pdf, {
-      head: [headers],
-      body: rows,
-      startY: tableY,
-      theme: 'grid',
-      styles: {
-        fontSize: 8,
-        cellPadding: 2,
-        lineColor: [0, 0, 0],
-        lineWidth: 0.5,
-        halign: 'center',
-        textColor: [0, 0, 0] // Explicitly set text color to black
-      },
-      headStyles: {
-        fillColor: [240, 240, 240],
-        textColor: [0, 0, 0],
-        fontStyle: 'bold',
-        halign: 'center',
-        valign: 'middle'
-      },
-      columnStyles: {
-        0: { halign: 'left' }
-      },
-      didParseCell: function(data) {
-        // Make all subject rows bold with black text and white background
-        data.cell.styles.fontStyle = 'bold';
-        data.cell.styles.fillColor = [255, 255, 255]; // White background
-        data.cell.styles.textColor = [0, 0, 0]; // Black text
-        
-        // Make the total row bold with gray background and black text
-        if (data.row.index === rows.length - 1) {
-          data.cell.styles.fontStyle = 'bold';
-          data.cell.styles.fillColor = [240, 240, 240];
-          data.cell.styles.textColor = [0, 0, 0]; // Black text
-        }
-      }
-    });
+
+rows.push(totalRow);
+
+autoTable(pdf, {
+  head: [headers],
+  body: rows,
+  startY: tableY,
+  theme: 'grid',
+  styles: {
+    fontSize: 8,
+    cellPadding: 2,
+    lineColor: [0, 0, 0],
+    lineWidth: 0.5,
+    halign: 'center',
+    textColor: [0, 0, 0]
+  },
+  headStyles: {
+    fillColor: [240, 240, 240],
+    textColor: [0, 0, 0],
+    fontStyle: 'bold',
+    halign: 'center',
+    valign: 'middle'
+  },
+  columnStyles: {
+    0: { halign: 'left' }
+  },
+  didParseCell: function(data) {
+    data.cell.styles.fontStyle = 'bold';
+    data.cell.styles.fillColor = [255, 255, 255];
+    data.cell.styles.textColor = [0, 0, 0];
+    if (data.row.index === rows.length - 1) {
+      data.cell.styles.fontStyle = 'bold';
+      data.cell.styles.fillColor = [240, 240, 240];
+      data.cell.styles.textColor = [0, 0, 0];
+    }
+  }
+});
+
     
     // Result table
     const resultY = pdf.lastAutoTable.finalY + 5;
