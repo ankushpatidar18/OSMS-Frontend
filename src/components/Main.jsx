@@ -17,6 +17,7 @@ import { setAdminChecked, setAdminInfo } from "@/redux/slices/adminSlice";
 import RequireAdmin from "./RequireAdmin";
 import AddStudentForm from "./AddStudentForm";
 import DeleteStudents from "./DeleteStudents";
+import MarksEntryMatrix from "./MarkEntryMatrix";
 
 const appRouter = createBrowserRouter([
   {
@@ -71,6 +72,9 @@ const appRouter = createBrowserRouter([
           {
             path: "delete-student",
             element: <DeleteStudents />, 
+          },{
+            path: "mark-entry-matrix",
+            element: <MarksEntryMatrix />,
           }
         ],
       },

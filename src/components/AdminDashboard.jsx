@@ -90,7 +90,20 @@ const AdminDashboard = () => {
         >
           Delete Student
         </NavLink>
+        <NavLink
+          to="mark-entry-matrix"
+          className={({ isActive }) =>
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
+          }
+        >
+          MarksEntry(Matrix)
+        </NavLink>
       </div>
+      
 
       {/* Content Area */}
       <div className="flex-1 p-6 bg-gray-50">

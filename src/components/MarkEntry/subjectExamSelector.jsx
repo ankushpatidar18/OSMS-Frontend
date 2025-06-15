@@ -58,7 +58,7 @@ export default function SubjectExamSelector({
                   className="px-4 py-3 hover:bg-blue-50 cursor-pointer transition-colors duration-150"
                 >
                   <div className="flex flex-col">
-                    <span className="font-medium text-gray-800">{exam.name}</span>
+                    <span className="font-medium text-gray-800">{exam.name}({exam.session})</span>
                     <span className="text-xs text-gray-500">Max Marks: {exam.total_marks}</span>
                   </div>
                 </SelectItem>

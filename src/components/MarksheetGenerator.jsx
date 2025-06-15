@@ -543,17 +543,17 @@ autoTable(pdf, {
     // Class Teacher underline (extreme left)
     pdf.line(10, signatureY - 4, 40, signatureY - 4);
     // Exam Incharge underline (center)
-    pdf.line(85, signatureY - 4, 125, signatureY - 4);
+    pdf.line(93, signatureY - 4, 125, signatureY - 4);
     // Principal underline (extreme right)
-    pdf.line(160, signatureY - 4, 190, signatureY - 4);
+    pdf.line(180, signatureY - 4, 200, signatureY - 4);
     
     // Signature labels
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(0, 0, 0); // Ensure black text
+    pdf.setTextColor(0, 0, 0); // Ensure black text 113 190
     pdf.text('CLASS TEACHER', 25, signatureY, { align: 'center' }); // Extreme left
-    pdf.text('EXAM INCHARGE', 105, signatureY, { align: 'center' }); // Center
-    pdf.text('PRINCIPAL', 175, signatureY, { align: 'center' }); // Extreme right
+    pdf.text('EXAM INCHARGE', 109, signatureY, { align: 'center' }); // Center
+    pdf.text('PRINCIPAL', 190, signatureY, { align: 'center' }); // Extreme right
   });
   
   pdf.save(`Marksheets_${selectedClass}_${session}.pdf`);
