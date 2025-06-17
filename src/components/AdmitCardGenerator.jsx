@@ -1,13 +1,18 @@
-
 import React, { useState, useEffect } from 'react';
 import { getClasses, getExams, getAdmitCardData } from '../utils/api';
 import AdmitCardPreview from './AdmitCardPreview';
+
+const SESSION_OPTIONS = [
+  "2023-2024", "2024-2025", "2025-2026", "2026-2027", "2027-2028",
+  "2028-2029", "2029-2030", "2030-2031", "2031-2032", "2032-2033", "2033-2034"
+];
 
 export default function AdmitCardGenerator() {
   const [classes, setClasses] = useState([]);
   const [exams, setExams] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
   const [selectedExam, setSelectedExam] = useState('');
+  const [selectedSession, setSelectedSession] = useState('');
   const [admitData, setAdmitData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchingDropdowns, setFetchingDropdowns] = useState(true);
@@ -28,12 +33,12 @@ export default function AdmitCardGenerator() {
 
   // Handle admit card generation
   const handleGenerate = async () => {
-    if (!selectedClass || !selectedExam) return;
+    if (!selectedSession || !selectedClass || !selectedExam) return;
     setLoading(true);
     setError('');
     setAdmitData(null);
     try {
-      const res = await getAdmitCardData(selectedClass, selectedExam);
+      const res = await getAdmitCardData(selectedClass, selectedExam, selectedSession);
       setAdmitData(res.data);
     } catch (err) {
       setError('Failed to fetch admit card data.' + err.message);
@@ -47,6 +52,19 @@ export default function AdmitCardGenerator() {
       <h2 className="text-2xl font-bold mb-4">Generate Admit Cards</h2>
 
       <div className="flex gap-4 mb-4">
+        {/* Session Dropdown */}
+        <select
+          className="border p-2 rounded"
+          value={selectedSession}
+          onChange={e => setSelectedSession(e.target.value)}
+          aria-label="Select Session"
+        >
+          <option value="">Select Session</option>
+          {SESSION_OPTIONS.map(session => (
+            <option key={session} value={session}>{session}</option>
+          ))}
+        </select>
+
         {/* Class Dropdown */}
         <select
           className="border p-2 rounded"
@@ -72,17 +90,17 @@ export default function AdmitCardGenerator() {
           <option value="">Select Exam</option>
           {exams.map(e => (
             <option key={e.exam_id} value={e.exam_id}>
-              {e.name} ({e.session})
+              {e.name} ({e.session})({e.class_group})
             </option>
           ))}
         </select>
 
         {/* Generate Button */}
         <button
-          className={`px-4 py-2 rounded text-white ${loading || fetchingDropdowns || !selectedClass || !selectedExam ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
+          className={`px-4 py-2 rounded text-white ${loading || fetchingDropdowns || !selectedSession || !selectedClass || !selectedExam ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
           onClick={handleGenerate}
-          disabled={loading || fetchingDropdowns || !selectedClass || !selectedExam}
-          aria-disabled={loading || fetchingDropdowns || !selectedClass || !selectedExam}
+          disabled={loading || fetchingDropdowns || !selectedSession || !selectedClass || !selectedExam}
+          aria-disabled={loading || fetchingDropdowns || !selectedSession || !selectedClass || !selectedExam}
         >
           {loading ? 'Generating...' : 'Generate'}
         </button>

@@ -23,7 +23,11 @@ export default function AddStudentForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/students/full-register', formData);
+      await axios.post(
+        'http://localhost:5000/api/students/full-register',
+        formData,
+        { withCredentials: true }
+      );
       alert('Student registered successfully');
       setFormData({});
     } catch (err) {

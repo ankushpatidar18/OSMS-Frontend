@@ -19,7 +19,7 @@ const AdminDashboard = () => {
           Upload Students
         </NavLink>
         <NavLink
-          to="select-class"
+          to="admit-card"
           className={({ isActive }) =>
             `block p-3 rounded-md transition-colors duration-200 ${
               isActive
@@ -101,6 +101,18 @@ const AdminDashboard = () => {
           }
         >
           MarksEntry(Matrix)
+        </NavLink>
+        <NavLink
+          to="exam-schedule"
+          className={({ isActive }) =>
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
+          }
+        >
+          Exam Schedule
         </NavLink>
       </div>
       

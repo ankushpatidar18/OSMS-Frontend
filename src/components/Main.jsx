@@ -7,7 +7,6 @@ import AppLayout from "./AppLayout";
 import AdminDashboard from "./AdminDashboard";
 import AdminLoginForm from "./AdminLoginForm";
 import UploadStudents from "./UploadStudents";
-import SelectClass from "./SelectClass";
 import Students from "./Students";
 import MarksheetGenerator from "./MarksheetGenerator";
 import MarkEntryPage from "./MarkEntryPage";
@@ -18,6 +17,9 @@ import RequireAdmin from "./RequireAdmin";
 import AddStudentForm from "./AddStudentForm";
 import DeleteStudents from "./DeleteStudents";
 import MarksEntryMatrix from "./MarkEntryMatrix";
+import ExamScheduleManager from "./ExamScheduleManager";
+import AdmitCardGenerator from "./AdmitCardGenerator";
+import axios from "axios";
 
 const appRouter = createBrowserRouter([
   {
@@ -51,8 +53,8 @@ const appRouter = createBrowserRouter([
             element: <UploadStudents />,
           },
           {
-            path: "select-class",
-            element: <SelectClass />,
+            path: "admit-card",
+            element: <AdmitCardGenerator />,
           },
           {
             path: "students",
@@ -75,6 +77,10 @@ const appRouter = createBrowserRouter([
           },{
             path: "mark-entry-matrix",
             element: <MarksEntryMatrix />,
+          },
+          {
+            path:"exam-schedule",
+            element: <ExamScheduleManager/>
           }
         ],
       },
@@ -86,21 +92,20 @@ const Main = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-  fetch("http://localhost:5000/api/admin/me", {
-    credentials: "include",
-  })
-    .then(res => res.ok ? res.json() : null)
-    .then(data => {
-      if (data && data.admin) {
-        dispatch(setAdminInfo(data.admin));
-      } else {
-        dispatch(setAdminChecked(true)); 
-      }
-    })
-    .catch(() => {
-      dispatch(setAdminChecked(true));
-    });
-}, [dispatch]);
+    axios
+      .get("http://localhost:5000/api/admin/me", { withCredentials: true })
+      .then((res) => {
+        const data = res.data;
+        if (data && data.admin) {
+          dispatch(setAdminInfo(data.admin));
+        } else {
+          dispatch(setAdminChecked(true));
+        }
+      })
+      .catch(() => {
+        dispatch(setAdminChecked(true));
+      });
+  }, [dispatch]);
 
   return <RouterProvider router={appRouter} />;
 };

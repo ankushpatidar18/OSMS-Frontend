@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function useMarkEntry() {
   const [classes, setClasses] = useState([]);
@@ -15,60 +15,48 @@ export default function useMarkEntry() {
 
   // Fetch classes
   useEffect(() => {
-    axios.get('http://localhost:5000/api/classes', { withCredentials: true })
+    axios.get("http://localhost:5000/api/classes", { withCredentials: true })
       .then(res => setClasses(res.data))
-      .catch(err => setError('Failed to fetch classes: ' + err.message));
+      .catch(() => setClasses([]));
   }, []);
 
   // Fetch subjects for selected class
   useEffect(() => {
-    if (!selectedClass) return;
-    setSelectedSubject('');
-    setSubjects([]);
-    axios.get(`http://localhost:5000/api/subjects/for-class/${selectedClass}`, { withCredentials: true })
-      .then(res => setSubjects(res.data))
-      .catch(err => setError('Failed to fetch subjects: ' + err.message));
+    if (selectedClass) {
+      axios.get(`http://localhost:5000/api/subjects/for-class/${selectedClass}`, { withCredentials: true })
+        .then(res => setSubjects(res.data))
+        .catch(() => setSubjects([]));
+    }
   }, [selectedClass]);
 
   // Fetch exams for selected subject (class_subject_id)
   useEffect(() => {
-    if (!selectedSubject) return;
-    setExams([]);
-    axios.get(`http://localhost:5000/api/exams/for-class-subject/${selectedSubject}`, { withCredentials: true })
-      .then(res => setExams(res.data))
-      .catch(err => setError('Failed to fetch exams: ' + err.message));
+    if (selectedSubject) {
+      axios.get(`http://localhost:5000/api/exams/for-class-subject/${selectedSubject}`, { withCredentials: true })
+        .then(res => setExams(res.data))
+        .catch(() => setExams([]));
+    }
   }, [selectedSubject]);
 
   // Fetch students for selected class
   useEffect(() => {
-    if (!selectedClass) return;
-    setStudents([]);
-    axios.get(`http://localhost:5000/api/students/for-class/${selectedClass}`, { withCredentials: true })
-      .then(res => setStudents(res.data))
-      .catch(err => setError('Failed to fetch students: ' + err.message));
+    if (selectedClass) {
+      axios.get(`http://localhost:5000/api/students/for-class/${selectedClass}`, { withCredentials: true })
+        .then(res => setStudents(res.data))
+        .catch(() => setStudents([]));
+    }
   }, [selectedClass]);
 
   // Fetch marks for selected subject (class_subject_id) and exam
   useEffect(() => {
-    if (!selectedSubject || !selectedExam || !students.length) return;
-    setIsLoading(true);
-    axios.get(`http://localhost:5000/api/marks/entry-status?class_subject_id=${selectedSubject}&exam_id=${selectedExam}`, { withCredentials: true })
-      .then(res => {
-        const existingMarks = res.data;
-        setMarksData(students.map(student => ({
-          student_id: student.student_id,
-          name: student.name,
-          marks_obtained: existingMarks.find(m => m.student_id === student.student_id)?.marks_obtained || ''
-        })));
+    if (selectedSubject && selectedExam && students.length > 0) {
+      axios.get(`http://localhost:5000/api/marks/entry-status`, {
+        params: { class_subject_id: selectedSubject, exam_id: selectedExam },
+        withCredentials: true
       })
-      .catch(() => {
-        setMarksData(students.map(student => ({
-          student_id: student.student_id,
-          name: student.name,
-          marks_obtained: ''
-        })));
-      })
-      .finally(() => setIsLoading(false));
+        .then(res => setMarksData(res.data))
+        .catch(() => setMarksData([]));
+    }
   }, [selectedSubject, selectedExam, students]);
 
   const handleMarkChange = (studentId, value) => {

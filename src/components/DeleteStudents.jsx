@@ -27,7 +27,10 @@ export default function DeleteStudents() {
   useEffect(() => {
     if (session && selectedClass) {
       axios
-        .get(`http://localhost:5000/api/students/filter?session=${session}&class=${selectedClass}`)
+        .get(
+          `http://localhost:5000/api/students/filter?session=${session}&class=${selectedClass}`,
+          { withCredentials: true }
+        )
         .then((res) => setStudents(Array.isArray(res.data) ? res.data : []))
         .catch(() => setStudents([]));
     }
@@ -42,9 +45,13 @@ export default function DeleteStudents() {
   const deleteSelected = async () => {
     if (selectedIds.length === 0) return alert('No students selected.');
     try {
-      await axios.delete('http://localhost:5000/api/students/delete-many', {
-        data: { studentIds: selectedIds },
-      });
+      await axios.delete(
+        'http://localhost:5000/api/students/delete-many',
+        {
+          data: { studentIds: selectedIds },
+          withCredentials: true
+        }
+      );
       setStudents((prev) => prev.filter((s) => !selectedIds.includes(s.student_id)));
       setSelectedIds([]);
       alert('Selected students deleted successfully.');

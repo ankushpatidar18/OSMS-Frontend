@@ -7,7 +7,6 @@ export default function RequireAdmin({ children }) {
   const location = useLocation();
 
   if (!adminChecked) {
-    // Show a loading spinner or nothing while checking auth
     return <div>Loading...</div>;
   }
 

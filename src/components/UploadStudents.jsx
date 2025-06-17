@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, FileSpreadsheet, CheckCircle, XCircle, AlertCircle } from "lucide-react"
+import axios from "axios"
 
 const UploadStudents = () => {
   const [file, setFile] = useState(null)
@@ -54,21 +55,22 @@ const UploadStudents = () => {
     formData.append("file", file)
 
     try {
-      const response = await fetch("http://localhost:5000/api/upload-students", {
-        method: "POST",
-        body: formData,
-      })
+      const response = await axios.post(
+        "http://localhost:5000/api/upload-students",
+        formData,
+        { withCredentials: true }
+      )
 
-      const data = await response.json()
+      const data = response.data
 
-      if (response.ok) {
-        setMessage("success:" + data.message)
-        setFile(null) // Clear file after successful upload
-      } else {
-        setMessage("error:" + data.message)
-      }
+      setMessage("success:" + data.message)
+      setFile(null) // Clear file after successful upload
     } catch (error) {
-      setMessage("error:Error uploading file. Backend might be down.")
+      setMessage(
+        "error:" +
+          (error.response?.data?.message ||
+            "Error uploading file. Backend might be down.")
+      )
       console.error("Upload error:", error)
     } finally {
       setIsUploading(false)

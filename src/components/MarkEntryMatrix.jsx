@@ -37,22 +37,32 @@ export default function MarksEntryMatrix() {
   const [existingMarks, setExistingMarks] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/matrix/classes').then(res => setClasses(res.data));
+    axios
+      .get('http://localhost:5000/api/matrix/classes', { withCredentials: true })
+      .then(res => setClasses(res.data));
   }, []);
 
   useEffect(() => {
     if (selectedClass && selectedSession) {
-      axios.get(`http://localhost:5000/api/matrix/students?class=${selectedClass}&session=${selectedSession}`).then(res => setStudents(res.data));
+      axios
+        .get(`http://localhost:5000/api/matrix/students?class=${selectedClass}&session=${selectedSession}`, { withCredentials: true })
+        .then(res => setStudents(res.data));
     }
   }, [selectedClass, selectedSession]);
 
   useEffect(() => {
     if (selectedClass && selectedSession && selectedStudent) {
-      axios.get(`http://localhost:5000/api/matrix/subjects/${selectedClass}`).then(res => setSubjects(res.data));
-      axios.get(`http://localhost:5000/api/matrix/exams/${selectedClass}/${selectedSession}`).then(res => setExams(res.data));
-      axios.get(`http://localhost:5000/api/matrix/marks?student_id=${selectedStudent}`).then(res => setExistingMarks(res.data));
+      axios
+        .get(`http://localhost:5000/api/matrix/subjects/${selectedClass}`, { withCredentials: true })
+        .then(res => setSubjects(res.data));
+      axios
+        .get(`http://localhost:5000/api/matrix/exams/${selectedClass}/${selectedSession}`, { withCredentials: true })
+        .then(res => setExams(res.data));
+      axios
+        .get(`http://localhost:5000/api/matrix/marks?student_id=${selectedStudent}`, { withCredentials: true })
+        .then(res => setExistingMarks(res.data));
     }
-  }, [selectedStudent]);
+  }, [selectedStudent, selectedClass, selectedSession]);
 
   useEffect(() => {
     const prefilled = {};
@@ -78,11 +88,15 @@ export default function MarksEntryMatrix() {
       };
     }));
 
-    await axios.post('http://localhost:5000/api/matrix/marks', {
-      student_id: selectedStudent,
-      marks: payload,
-      recorded_by: 1
-    });
+    await axios.post(
+      'http://localhost:5000/api/matrix/marks',
+      {
+        student_id: selectedStudent,
+        marks: payload,
+        recorded_by: 1
+      },
+      { withCredentials: true }
+    );
     alert('Marks saved successfully!');
   };
 
@@ -145,7 +159,6 @@ export default function MarksEntryMatrix() {
                   {exams.map(exam => (
                     <td key={exam.exam_id} className="p-2 border text-center">
                       <Input
-                        // type="number"
                         className="w-20 text-center"
                         value={marks[`${subject.class_subject_id}-${exam.exam_id}`] || ''}
                         onChange={e => handleInput(subject.class_subject_id, exam.exam_id, e.target.value)}

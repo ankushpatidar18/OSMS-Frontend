@@ -4,11 +4,16 @@ import {
   addSchedule, 
   editSchedule, 
   deleteSchedule, 
-  getExams 
+  getExams,
+  getClasses // <-- Import getClasses
 } from '../utils/api';
+import axios from 'axios';
 
+export default function ExamScheduleManager() {
+  // New state for classes and selected class
+  const [classes, setClasses] = useState([]);
+  const [selectedClass, setSelectedClass] = useState('');
 
-export default function ExamScheduleManager({ className }) {
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   const [schedules, setSchedules] = useState([]);
@@ -23,27 +28,39 @@ export default function ExamScheduleManager({ className }) {
   });
   const [editId, setEditId] = useState(null);
 
-  // Reusable reset function
-  const resetForm = () => {
-    setForm({
-      subject_id: '',
-      exam_date: '',
-      exam_day: 'Monday',
-      exam_time: '09:00 to 12:00'
-    });
-    setEditId(null);
-  };
-
+  // Fetch classes on mount
   useEffect(() => {
+    const fetchClasses = async () => {
+      setIsLoading(true);
+      try {
+        const res = await getClasses();
+        setClasses(res.data || []); // adjust if your API returns {data: [...]}
+      } catch (err) {
+        setError(err.message || 'Failed to fetch classes');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchClasses();
+  }, []);
+
+  // Fetch exams and subjects when class changes
+  useEffect(() => {
+    if (!selectedClass) {
+      setExams([]);
+      setSubjects([]);
+      setSelectedExam('');
+      return;
+    }
     const fetchInitialData = async () => {
       setIsLoading(true);
       try {
         const [examsRes, subjectsRes] = await Promise.all([
-          getExams(),
-          fetch('http://localhost:5000/api/subjects').then(res => {
-            if (!res.ok) throw new Error('Failed to fetch subjects');
-            return res.json();
-          })
+          getExams(selectedClass), // pass selectedClass to getExams
+          axios.get(
+            'http://localhost:5000/api/subjects?class=' + encodeURIComponent(selectedClass),
+            { withCredentials: true }
+          ).then(res => res.data)
         ]);
         setExams(examsRes.data);
         setSubjects(subjectsRes);
@@ -54,24 +71,37 @@ export default function ExamScheduleManager({ className }) {
       }
     };
     fetchInitialData();
-  }, []);
+  }, [selectedClass]);
 
+  // Fetch schedules when exam changes
   useEffect(() => {
-    const fetchSchedules = async () => {
-      if (selectedExam) {
-        setIsLoading(true);
-        try {
-          const res = await getSchedules(className, selectedExam);
-          setSchedules(res.data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setIsLoading(false);
-        }
+    if (!selectedClass || !selectedExam) {
+      setSchedules([]);
+      return;
+    }
+    const fetchSchedulesData = async () => {
+      setIsLoading(true);
+      try {
+        const res = await getSchedules(selectedClass, selectedExam);
+        setSchedules(res.data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchSchedules();
-  }, [selectedExam, className]);
+    fetchSchedulesData();
+  }, [selectedExam, selectedClass]);
+
+  const resetForm = () => {
+    setForm({
+      subject_id: '',
+      exam_date: '',
+      exam_day: 'Monday',
+      exam_time: '09:00 to 12:00'
+    });
+    setEditId(null);
+  };
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -90,11 +120,11 @@ export default function ExamScheduleManager({ className }) {
       } else {
         await addSchedule({
           exam_id: selectedExam,
-          class_name: className,
+          class_name: selectedClass, // use selectedClass
           ...form
         });
       }
-      const res = await getSchedules(className, selectedExam);
+      const res = await getSchedules(selectedClass, selectedExam);
       setSchedules(res.data);
       resetForm();
     } catch (err) {
@@ -116,7 +146,7 @@ export default function ExamScheduleManager({ className }) {
     if (!window.confirm('Are you sure you want to delete this schedule?')) return;
     try {
       await deleteSchedule(id);
-      const res = await getSchedules(className, selectedExam);
+      const res = await getSchedules(selectedClass, selectedExam);
       setSchedules(res.data);
     } catch (err) {
       setError(err.message);
@@ -129,25 +159,56 @@ export default function ExamScheduleManager({ className }) {
   return (
     <div className="p-4 bg-white rounded shadow mt-4 mb-4">
       <h3 className="text-lg font-bold mb-2">Manage Exam Schedule</h3>
-      
+
+      {/* Class Selection Dropdown */}
       <div className="mb-4">
         <label className="block mb-2 font-medium">
-          Select Exam:
+          Select Class:
           <select
             className="border p-2 rounded w-full mt-1"
-            value={selectedExam}
-            onChange={e => setSelectedExam(e.target.value)}
-            aria-label="Select exam"
+            value={selectedClass}
+            onChange={e => {
+              setSelectedClass(e.target.value);
+              setSelectedExam('');
+              setSchedules([]);
+              setSubjects([]);
+            }}
+            aria-label="Select class"
           >
-            <option value="">Choose an exam</option>
-            {exams.map(e => (
-              <option key={e.exam_id} value={e.exam_id}>
-                {e.name} ({e.session}){e.class_group}
+            <option value="">Choose a class</option>
+            {classes.map(cls => (
+              <option 
+                key={cls.class} 
+                value={cls.class}
+              >
+                {cls.class}
               </option>
             ))}
           </select>
         </label>
       </div>
+
+      {/* Exam Selection Dropdown */}
+      {selectedClass && (
+        <div className="mb-4">
+          <label className="block mb-2 font-medium">
+            Select Exam:
+            <select
+              className="border p-2 rounded w-full mt-1"
+              value={selectedExam}
+              onChange={e => setSelectedExam(e.target.value)}
+              aria-label="Select exam"
+            >
+              <option value="">Choose an exam</option>
+              {exams.map(e => (
+                <option key={e.exam_id} value={e.exam_id}>
+                  {e.name} ({e.session}){e.class_group}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
 
       {selectedExam && (
         <>

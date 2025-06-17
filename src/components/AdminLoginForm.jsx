@@ -1,9 +1,9 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdminInfo } from "@/redux/slices/adminSlice";
+import axios from "axios";
 
 export default function AdminLoginForm() {
   const [email, setEmail] = useState("");
@@ -18,26 +18,20 @@ export default function AdminLoginForm() {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const res = await axios.post(
+        "http://localhost:5000/api/admin/login",
+        { email, password },
+        { withCredentials: true }
+      );
+      const data = res.data;
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.message || "Login failed");
-      } else {
-        console.log(data);
-        dispatch(setAdminInfo(data.admin));
-        navigate("/admin/dashboard");
-      }
+      dispatch(setAdminInfo(data.admin));
+      navigate("/admin/dashboard");
     } catch (err) {
-      setError("Server error" + (err.message ? `: ${err.message}` : ""));
+      setError(
+        err.response?.data?.message ||
+          "Login failed" + (err.message ? `: ${err.message}` : "")
+      );
     }
   };
 

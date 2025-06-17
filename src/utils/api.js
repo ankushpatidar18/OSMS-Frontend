@@ -1,16 +1,17 @@
-
 import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
 
+// Always send cookies with every request
+axios.defaults.withCredentials = true;
+
 export const getClasses = () => axios.get(`${API_URL}/classes`);
 export const getExams = () => axios.get(`${API_URL}/exams`);
-export const getAdmitCardData = (className, examId) =>
+export const getAdmitCardData = (className, examId, session) =>
   axios.get(`${API_URL}/admit-card-data`, {
-    params: { className, examId }
+    params: { className, examId, session }
   });
 
-  // ...existing imports
 export const getSchedules = (className, examId) =>
   axios.get(`${API_URL}/exam-schedules`, { params: { className, examId } });
 

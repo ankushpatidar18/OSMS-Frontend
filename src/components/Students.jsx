@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { Search, Edit2, Save, X, Filter, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import axios from "axios";
 
 const Students = () => {
   const [students, setStudents] = useState([])
@@ -19,21 +20,23 @@ const Students = () => {
 
   // Fetch students data
   const fetchStudents = async () => {
-    setLoading(true)
+    setLoading(true);
     try {
-      const queryParams = new URLSearchParams()
-      if (filters.name) queryParams.append("name", filters.name)
-      if (filters.class) queryParams.append("class", filters.class)
-      if (filters.roll_number) queryParams.append("roll_number", filters.roll_number)
+      const queryParams = new URLSearchParams();
+      if (filters.name) queryParams.append("name", filters.name);
+      if (filters.class) queryParams.append("class", filters.class);
+      if (filters.roll_number) queryParams.append("roll_number", filters.roll_number);
 
-      const response = await fetch(`http://localhost:5000/api/students?${queryParams}`)
-      const data = await response.json()
-      setStudents(data)
+      const response = await axios.get(
+        `http://localhost:5000/api/students?${queryParams}`,
+        { withCredentials: true }
+      );
+      setStudents(response.data);
     } catch (error) {
-      console.error("Error fetching students:", error)
-      alert("Error fetching students data")
+      console.error("Error fetching students:", error);
+      alert("Error fetching students data");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -117,25 +120,23 @@ const Students = () => {
   // Save changes
   const saveChanges = async (studentId) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/students/${studentId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editData),
-      })
+      const response = await axios.put(
+        `http://localhost:5000/api/students/${studentId}`,
+        editData,
+        { withCredentials: true }
+      );
 
-      if (response.ok) {
-        alert("Student updated successfully!")
-        setEditingId(null)
-        setEditData({})
-        fetchStudents() // Refresh the data
+      if (response.status === 200) {
+        alert("Student updated successfully!");
+        setEditingId(null);
+        setEditData({});
+        fetchStudents(); // Refresh the data
       } else {
-        throw new Error("Failed to update student")
+        throw new Error("Failed to update student");
       }
     } catch (error) {
-      console.error("Error updating student:", error)
-      alert("Error updating student data")
+      console.error("Error updating student:", error);
+      alert("Error updating student data");
     }
   }
 
