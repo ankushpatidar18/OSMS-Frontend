@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"
-import { Search, Edit2, Save, X, Filter, RotateCcw } from "lucide-react"
+import { Search, Edit2, Save, X, Filter, RotateCcw, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import axios from "axios";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const Students = () => {
   const [students, setStudents] = useState([])
@@ -107,8 +109,10 @@ const Students = () => {
       height_cm: student.height_cm || "",
       weight_kg: student.weight_kg || "",
       category: student.category || "",
+      PEN_Number: student.PEN_Number || "",      // Added
+      APAAR_Number: student.APAAR_Number || "",  // Added
     })
-    setIsExpanded((prev) => ({ ...prev, [student.student_id]: true })) // Update isExpanded state
+    setIsExpanded((prev) => ({ ...prev, [student.student_id]: true }))
   }
 
   // Cancel editing
@@ -150,6 +154,265 @@ const Students = () => {
   const toggleExpand = (studentId) => {
     setIsExpanded((prev) => ({ ...prev, [studentId]: !prev[studentId] }))
   }
+
+ // Export to PDF with enhanced styling
+// Export to PDF with enhanced styling
+const exportToPDF = () => {
+  const doc = new jsPDF();
+  
+  students.forEach((student, index) => {
+    // Add page for each student except first
+    if (index > 0) {
+      doc.addPage();
+    }
+    
+    // Header Section with Background
+    doc.setFillColor(41, 128, 185); // Blue background
+    doc.rect(0, 0, 210, 35, 'F'); // Reduced header height
+    
+    // School Name - Main Header
+    doc.setTextColor(255, 255, 255); // White text
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    const schoolName = 'MATRA KRIPA EDUCATION POINT BADAGAON';
+    const schoolNameWidth = doc.getTextWidth(schoolName);
+    doc.text(schoolName, (210 - schoolNameWidth) / 2, 15); // Centered
+    
+    // School Address
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    const address = 'BLOCK NALKHEDA, DISTRICT AGAR MALWA MP';
+    const addressWidth = doc.getTextWidth(address);
+    doc.text(address, (210 - addressWidth) / 2, 24); // Centered
+    
+    // Student Name and Session
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    const studentInfo = `Student Information - ${student.name} | Session: ${student.session}`;
+    const studentInfoWidth = doc.getTextWidth(studentInfo);
+    doc.text(studentInfo, (210 - studentInfoWidth) / 2, 32);
+    
+    // Reset text color for content
+    doc.setTextColor(0, 0, 0);
+    
+    let currentY = 45;
+    
+    // Basic Information Section
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(41, 128, 185);
+    doc.text('Basic Information', 14, currentY);
+    
+    const basicInfo = [
+      ['Name', student.name],
+      ['Gender', student.gender],
+      ['Date of Birth', formatDateForDisplay(student.dob)],
+      ['Aadhaar Number', student.aadhaar_number],
+      ['Mobile Number', student.mobile_number],
+      ['Address', student.address],
+      ['Pincode', student.pincode]
+    ];
+    
+    autoTable(doc, {
+      startY: currentY + 2,
+      head: [],
+      body: basicInfo,
+      theme: 'grid',
+      styles: { 
+        fontSize: 8,
+        cellPadding: 2,
+        textColor: [44, 62, 80]
+      },
+      columnStyles: { 
+        0: { 
+          cellWidth: 40,
+          fontStyle: 'bold',
+          fillColor: [236, 240, 241],
+          textColor: [52, 73, 94]
+        },
+        1: { 
+          cellWidth: 90,
+          fillColor: [255, 255, 255]
+        }
+      }
+    });
+    
+    currentY = doc.lastAutoTable.finalY + 8;
+    
+    // Academic Information Section
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(231, 76, 60);
+    doc.text('Academic Information', 14, currentY);
+    
+    const academicInfo = [
+      ['Class', student.class],
+      ['Roll Number', student.roll_number],
+      ['Medium', student.medium],
+      ['SSSMID', student.sssmid],
+      ['Category', student.category],
+      ['PEN Number', student.PEN_Number],
+      ['APAAR Number', student.APAAR_Number]
+    ];
+    
+    autoTable(doc, {
+      startY: currentY + 2,
+      head: [],
+      body: academicInfo,
+      theme: 'grid',
+      styles: { 
+        fontSize: 8,
+        cellPadding: 2,
+        textColor: [44, 62, 80]
+      },
+      columnStyles: {
+        0: { 
+          cellWidth: 40,
+          fontStyle: 'bold',
+          fillColor: [255, 235, 235],
+          textColor: [192, 57, 43]
+        },
+        1: { 
+          cellWidth: 90,
+          fillColor: [255, 255, 255]
+        }
+      }
+    });
+    
+    currentY = doc.lastAutoTable.finalY + 8;
+    
+    // Create two-column layout for remaining sections
+    const leftColX = 14;
+    const rightColX = 110;
+    
+    
+    // Parents Information Section (Left Column)
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(39, 174, 96);
+    doc.text('Parents Information', leftColX, currentY);
+    
+    const parentsInfo = [
+      ['Father\'s Name', student.father_name],
+      ['Mother\'s Name', student.mother_name]
+    ];
+    
+    autoTable(doc, {
+      startY: currentY + 2,
+      head: [],
+      body: parentsInfo,
+      theme: 'grid',
+      styles: { 
+        fontSize: 8,
+        cellPadding: 2,
+        textColor: [44, 62, 80]
+      },
+      columnStyles: {
+        0: { 
+          cellWidth: 30,
+          fontStyle: 'bold',
+          fillColor: [230, 247, 236],
+          textColor: [39, 174, 96]
+        },
+        1: { 
+          cellWidth: 55,
+          fillColor: [255, 255, 255]
+        }
+      },
+      margin: { left: leftColX }
+    });
+    
+    // Admission Information Section (Right Column)
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(142, 68, 173);
+    doc.text('Admission Information', rightColX, currentY);
+    
+    const admissionInfo = [
+      ['Admission No', student.admission_no],
+      ['Admission Date', formatDateForDisplay(student.admission_date)]
+    ];
+    
+    autoTable(doc, {
+      startY: currentY + 2,
+      head: [],
+      body: admissionInfo,
+      theme: 'grid',
+      styles: { 
+        fontSize: 8,
+        cellPadding: 2,
+        textColor: [44, 62, 80]
+      },
+      columnStyles: {
+        0: { 
+          cellWidth: 30,
+          fontStyle: 'bold',
+          fillColor: [243, 235, 247],
+          textColor: [142, 68, 173]
+        },
+        1: { 
+          cellWidth: 55,
+          fillColor: [255, 255, 255]
+        }
+      },
+      margin: { left: rightColX }
+    });
+    
+    currentY = Math.max(doc.lastAutoTable.finalY, currentY + 25) + 8;
+    
+    // Physical Information Section (Center)
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(230, 126, 34);
+    doc.text('Physical Information', leftColX, currentY);
+    
+    const physicalInfo = [
+      ['Height (cm)', student.height_cm],
+      ['Weight (kg)', student.weight_kg]
+    ];
+    
+    autoTable(doc, {
+      startY: currentY + 2,
+      head: [],
+      body: physicalInfo,
+      theme: 'grid',
+      styles: { 
+        fontSize: 8,
+        cellPadding: 2,
+        textColor: [44, 62, 80]
+      },
+      columnStyles: {
+        0: { 
+          cellWidth: 30,
+          fontStyle: 'bold',
+          fillColor: [254, 245, 231],
+          textColor: [230, 126, 34]
+        },
+        1: { 
+          cellWidth: 55,
+          fillColor: [255, 255, 255]
+        }
+      }
+    });
+    
+    // Footer with border
+    const pageHeight = doc.internal.pageSize.height;
+    doc.setDrawColor(41, 128, 185);
+    doc.setLineWidth(2);
+    doc.line(14, pageHeight - 20, 196, pageHeight - 20);
+    
+    doc.setFontSize(8);
+    doc.setTextColor(127, 140, 141);
+    doc.setFont('helvetica', 'italic');
+    const footerText = 'Generated by Matra Kripa Education Point - Student Management System';
+    const footerWidth = doc.getTextWidth(footerText);
+    doc.text(footerText, (210 - footerWidth) / 2, pageHeight - 10);
+  });
+  
+  // Save the PDF with timestamp
+  const timestamp = new Date().toISOString().split('T')[0];
+  doc.save(`students_${filters.session || 'all'}_${timestamp}.pdf`);
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
@@ -247,6 +510,15 @@ const Students = () => {
       >
         <RotateCcw className="h-4 w-4" />
         Clear
+      </Button>
+      {/* Add Export Button */}
+      <Button
+        onClick={exportToPDF}
+        className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium"
+        disabled={students.length === 0}
+      >
+        <Download className="h-4 w-4" />
+        Export PDF
       </Button>
     </div>
   </CardContent>
@@ -590,6 +862,38 @@ const Students = () => {
                                   ) : (
                                     <span className="inline-block px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">
                                       {student.category || "-"}
+                                    </span>
+                                  )}
+                                </div>
+                                {/* PEN Number */}
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-1">PEN Number</label>
+                                  {editingId === student.student_id ? (
+                                    <input
+                                      type="number"
+                                      value={editData.PEN_Number}
+                                      onChange={(e) => handleEditChange("PEN_Number", e.target.value)}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                  ) : (
+                                    <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
+                                      {student.PEN_Number || "-"}
+                                    </span>
+                                  )}
+                                </div>
+                                {/* APAAR Number */}
+                                <div>
+                                  <label className="block text-xs font-medium text-gray-600 mb-1">APAAR Number</label>
+                                  {editingId === student.student_id ? (
+                                    <input
+                                      type="number"
+                                      value={editData.APAAR_Number}
+                                      onChange={(e) => handleEditChange("APAAR_Number", e.target.value)}
+                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                  ) : (
+                                    <span className="inline-block px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                                      {student.APAAR_Number || "-"}
                                     </span>
                                   )}
                                 </div>
