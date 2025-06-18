@@ -10,6 +10,7 @@ const Students = () => {
   const [editingId, setEditingId] = useState(null)
   const [editData, setEditData] = useState({})
   const [filters, setFilters] = useState({
+    session: "",
     name: "",
     class: "",
     roll_number: "",
@@ -17,12 +18,17 @@ const Students = () => {
   const [isExpanded, setIsExpanded] = useState({}) 
 
   const classOptions = ["KG1", "KG2", "1", "2", "3", "4", "5", "6", "7", "8"]
+  const sessionOptions = [
+    "2023-2024", "2024-2025", "2025-2026", "2026-2027", "2027-2028",
+    "2028-2029", "2029-2030", "2030-2031", "2031-2032", "2032-2033", "2033-2034"
+  ];
 
   // Fetch students data
   const fetchStudents = async () => {
     setLoading(true);
     try {
       const queryParams = new URLSearchParams();
+      if (filters.session) queryParams.append("session", filters.session);
       if (filters.name) queryParams.append("name", filters.name);
       if (filters.class) queryParams.append("class", filters.class);
       if (filters.roll_number) queryParams.append("roll_number", filters.roll_number);
@@ -34,7 +40,7 @@ const Students = () => {
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
-      alert("Error fetching students data");
+      // alert("Error fetching students data");
     } finally {
       setLoading(false);
     }
@@ -56,7 +62,7 @@ const Students = () => {
 
   // Clear filters
   const clearFilters = () => {
-    setFilters({ name: "", class: "", roll_number: "" })
+    setFilters({ session: "", name: "", class: "", roll_number: "" })
     setTimeout(() => fetchStudents(), 100)
   }
 
@@ -154,71 +160,99 @@ const Students = () => {
           <p className="text-gray-600">Manage and edit student information</p>
         </div>
 
-        {/* Filters Section */}
-        <Card className="shadow-lg border-0">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Filter className="h-5 w-5" />
-              Search & Filter Students
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Student Name</label>
-                <input
-                  type="text"
-                  value={filters.name}
-                  onChange={(e) => handleFilterChange("name", e.target.value)}
-                  placeholder="Search by name..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Class</label>
-                <select
-                  value={filters.class}
-                  onChange={(e) => handleFilterChange("class", e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                >
-                  <option value="">All Classes</option>
-                  {classOptions.map((cls) => (
-                    <option key={cls} value={cls}>
-                      Class {cls}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="block text-sm font-semibold text-gray-700">Roll Number</label>
-                <input
-                  type="text"
-                  value={filters.roll_number}
-                  onChange={(e) => handleFilterChange("roll_number", e.target.value)}
-                  placeholder="Search by roll number..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
-                />
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2 sm:items-end">
-                <Button
-                  onClick={handleSearch}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium"
-                >
-                  <Search className="h-4 w-4" />
-                  Search
-                </Button>
-                <Button
-                  onClick={clearFilters}
-                  variant="outline"
-                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                  Clear
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+   {/* Filters Section */}
+<Card className="shadow-lg border-0">
+  <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
+    <CardTitle className="flex items-center gap-2 text-lg">
+      <Filter className="h-5 w-5" />
+      Search & Filter Students
+    </CardTitle>
+  </CardHeader>
+  <CardContent className="p-6">
+    {/* Filter Fields Grid */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Session Filter (Mandatory) */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700">
+          Session <span className="text-red-500">*</span>
+        </label>
+        <select
+          value={filters.session}
+          onChange={(e) => handleFilterChange("session", e.target.value)}
+          className="px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+          required
+        >
+          <option value="">Select Session</option>
+          {sessionOptions.map((session) => (
+            <option key={session} value={session}>{session}</option>
+          ))}
+        </select>
+      </div>
+      {/* Name Filter */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700">Student Name</label>
+        <input
+          type="text"
+          value={filters.name}
+          onChange={(e) => handleFilterChange("name", e.target.value)}
+          placeholder="Search by name..."
+          className="w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+          disabled={!filters.session}
+        />
+      </div>
+      {/* Class Filter */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700">Class</label>
+        <select
+          value={filters.class}
+          onChange={(e) => handleFilterChange("class", e.target.value)}
+          className="w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+          disabled={!filters.session}
+        >
+          <option value="">All Classes</option>
+          {classOptions.map((cls) => (
+            <option key={cls} value={cls}>
+              Class {cls}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Roll Number Filter */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700">Roll Number</label>
+        <input
+          type="text"
+          value={filters.roll_number}
+          onChange={(e) => handleFilterChange("roll_number", e.target.value)}
+          placeholder="Search by roll number..."
+          className="w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+          disabled={!filters.session}
+        />
+      </div>
+    </div>
+    {/* Buttons Row */}
+    <div className="flex flex-col sm:flex-row gap-3 mt-6 w-full">
+      <Button
+        onClick={handleSearch}
+        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium"
+        disabled={!filters.session}
+      >
+        <Search className="h-4 w-4" />
+        Search
+      </Button>
+      <Button
+        onClick={clearFilters}
+        variant="outline"
+        className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 font-medium"
+      >
+        <RotateCcw className="h-4 w-4" />
+        Clear
+      </Button>
+    </div>
+  </CardContent>
+</Card>
+
+
 
         {/* Students Table */}
         <Card className="shadow-lg border-0">

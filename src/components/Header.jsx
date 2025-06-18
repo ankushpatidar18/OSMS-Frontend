@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAdminInfo } from "@/redux/slices/adminSlice";
+import mkeplogo from "@/assets/mkeplogo.png"; 
 
 export default function Header() {
   const [showRoles, setShowRoles] = useState(false);
@@ -43,16 +44,16 @@ export default function Header() {
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between relative">
           <div className="flex items-center space-x-3">
             <img
-              src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=50&h=50&fit=crop&crop=center"
+              src={mkeplogo}
               alt="Logo"
-              className="w-12 h-12 rounded-full border-2 border-blue-600 object-cover"
+              className="w-20 h-20 rounded-full object-cover"
             />
             <div>
-              <h1 className="text-xl font-bold text-blue-800">
+              <h1 className="text-lg font-bold text-blue-800">
                 Matra Kripa Education Point
               </h1>
               <p className="text-xs text-gray-600">Excellence in Education</p>
