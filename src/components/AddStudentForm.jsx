@@ -129,6 +129,12 @@ export default function AddStudentForm() {
           </Select>
         </CardContent>
       </Card>
+      <Card>
+        <CardContent className="grid gap-4 p-4">
+          <Input placeholder="APAAR Number" value={formData.APAAR_Number || ''} onChange={e => handleChange('APAAR_Number', e.target.value)} />
+          <Input placeholder="PEN Number" value={formData.PEN_Number || ''} onChange={e => handleChange('PEN_Number', e.target.value)} />
+        </CardContent>
+      </Card>
 
       <div className="text-center">
         <Button type="submit">Submit</Button>

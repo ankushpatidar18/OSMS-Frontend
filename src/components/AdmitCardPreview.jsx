@@ -62,7 +62,7 @@ export default function AdmitCardPreview({ data }) {
       doc.setFontSize(12);
       doc.setFont(undefined, 'normal');
       doc.text(`NAME: ${student.name}`, 17, 60);
-      doc.text(`FATHER'S NAME: ${student.father_name}`, 17, 70);
+      doc.text(`FATHER NAME: ${student.father_name}`, 17, 70);
 
       // Class and Roll No
       doc.setFontSize(12);

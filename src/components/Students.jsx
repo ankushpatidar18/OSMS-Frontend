@@ -15,7 +15,7 @@ const Students = () => {
     session: "",
     name: "",
     class: "",
-    roll_number: "",
+    admission_no: "", // changed from roll_number
   })
   const [isExpanded, setIsExpanded] = useState({}) 
 
@@ -33,7 +33,7 @@ const Students = () => {
       if (filters.session) queryParams.append("session", filters.session);
       if (filters.name) queryParams.append("name", filters.name);
       if (filters.class) queryParams.append("class", filters.class);
-      if (filters.roll_number) queryParams.append("roll_number", filters.roll_number);
+      if (filters.admission_no) queryParams.append("admission_no", filters.admission_no); // changed
 
       const response = await axios.get(
         `http://localhost:5000/api/students?${queryParams}`,
@@ -42,11 +42,10 @@ const Students = () => {
       setStudents(response.data);
     } catch (error) {
       console.error("Error fetching students:", error);
-      // alert("Error fetching students data");
-    } finally {
-      setLoading(false);
-    }
+  } finally {
+    setLoading(false);
   }
+}
 
   useEffect(() => {
     fetchStudents()
@@ -64,7 +63,7 @@ const Students = () => {
 
   // Clear filters
   const clearFilters = () => {
-    setFilters({ session: "", name: "", class: "", roll_number: "" })
+    setFilters({ session: "", name: "", class: "", admission_no: "" }) // changed
     setTimeout(() => fetchStudents(), 100)
   }
 
@@ -480,14 +479,14 @@ const exportToPDF = () => {
           ))}
         </select>
       </div>
-      {/* Roll Number Filter */}
+      {/* Admission Number Filter (was Roll Number) */}
       <div>
-        <label className="block text-sm font-semibold text-gray-700">Roll Number</label>
+        <label className="block text-sm font-semibold text-gray-700">Admission Number</label>
         <input
           type="text"
-          value={filters.roll_number}
-          onChange={(e) => handleFilterChange("roll_number", e.target.value)}
-          placeholder="Search by roll number..."
+          value={filters.admission_no}
+          onChange={(e) => handleFilterChange("admission_no", e.target.value)}
+          placeholder="Search by admission number..."
           className="w-full px-1 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
           disabled={!filters.session}
         />
