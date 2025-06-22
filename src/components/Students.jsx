@@ -98,7 +98,6 @@ const Students = () => {
       class: student.class || "",
       medium: student.medium || "",
       session: student.session || "",
-      is_repeater: student.is_repeater || 0,
       mobile_number: student.mobile_number || "",
       roll_number: student.roll_number || "",
       father_name: student.father_name || "",
@@ -808,30 +807,7 @@ const exportToPDF = () => {
                                   )}
                                 </div>
 
-                                <div>
-                                  <label className="block text-xs font-medium text-gray-600 mb-1">Is Repeater</label>
-                                  {editingId === student.student_id ? (
-                                    <select
-                                      value={editData.is_repeater}
-                                      onChange={(e) => handleEditChange("is_repeater", Number.parseInt(e.target.value))}
-                                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                      required
-                                    >
-                                      <option value={0}>No</option>
-                                      <option value={1}>Yes</option>
-                                    </select>
-                                  ) : (
-                                    <span
-                                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                        student.is_repeater
-                                          ? "bg-yellow-100 text-yellow-800"
-                                          : "bg-green-100 text-green-800"
-                                      }`}
-                                    >
-                                      {student.is_repeater ? "Yes" : "No"}
-                                    </span>
-                                  )}
-                                </div>
+  
 
                                 <div>
                                   <label className="block text-xs font-medium text-gray-600 mb-1">SSSMID</label>

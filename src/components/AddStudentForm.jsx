@@ -10,7 +10,6 @@ const classOptions = ['KG1', 'KG2', '1', '2', '3', '4', '5', '6', '7', '8'];
 const genderOptions = ['Male', 'Female'];
 const categoryOptions = ['GENERAL', 'OBC', 'SC', 'ST'];
 const mediumOptions = ['Hindi', 'English'];
-const isRepeaterOptions = ['Yes', 'No'];
 const sessionOptions = Array.from({ length: 11 }, (_, i) => `${2023 + i}-${2024 + i}`);
 
 export default function AddStudentForm() {
@@ -76,13 +75,6 @@ export default function AddStudentForm() {
             <SelectTrigger><SelectValue placeholder="Select Session" /></SelectTrigger>
             <SelectContent>
               {sessionOptions.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}
-            </SelectContent>
-          </Select>
-
-          <Select onValueChange={value => handleChange('is_repeater', value === 'Yes')}>
-            <SelectTrigger><SelectValue placeholder="Is Repeater?" /></SelectTrigger>
-            <SelectContent>
-              {isRepeaterOptions.map(opt => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}
             </SelectContent>
           </Select>
 

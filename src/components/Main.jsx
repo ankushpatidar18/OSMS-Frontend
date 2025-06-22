@@ -20,6 +20,7 @@ import MarksEntryMatrix from "./MarkEntryMatrix";
 import ExamScheduleManager from "./ExamScheduleManager";
 import AdmitCardGenerator from "./AdmitCardGenerator";
 import axios from "axios";
+import PromoteStudents from "./PromoteStudents";
 
 const appRouter = createBrowserRouter([
   {
@@ -81,6 +82,10 @@ const appRouter = createBrowserRouter([
           {
             path:"exam-schedule",
             element: <ExamScheduleManager/>
+          },
+          {
+            path : "promote-students",
+            element : <PromoteStudents/>
           }
         ],
       },

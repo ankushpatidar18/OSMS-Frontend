@@ -88,7 +88,19 @@ const AdminDashboard = () => {
             }`
           }
         >
-          Delete Student
+          Remove Student
+        </NavLink>
+        <NavLink
+          to="promote-students"
+          className={({ isActive }) =>
+            `block p-3 rounded-md transition-colors duration-200 ${
+              isActive
+                ? "bg-blue-100 text-blue-700 font-semibold"
+                : "hover:bg-blue-50 hover:text-blue-700"
+            }`
+          }
+        >
+          Promote Students
         </NavLink>
         <NavLink
           to="mark-entry-matrix"
