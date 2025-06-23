@@ -13,6 +13,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Users, GraduationCap, Calendar, Trash2 } from 'lucide-react';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const sessions = Array.from({ length: 11 }, (_, i) => {
   const start = 2023 + i;
@@ -33,7 +34,7 @@ export default function DeleteStudents() {
       setLoading(true);
       axios
         .get(
-          `http://localhost:5000/api/students/filter?session=${session}&class=${selectedClass}`,
+          `${ApiUrl}/students/filter?session=${session}&class=${selectedClass}`,
           { withCredentials: true }
         )
         .then((res) => {
@@ -73,7 +74,7 @@ export default function DeleteStudents() {
 
     try {
       await axios.delete(
-        'http://localhost:5000/api/students/delete-many',
+        '${ApiUrl}/students/delete-many',
         {
           data: { studentIds: selectedIds },
           withCredentials: true

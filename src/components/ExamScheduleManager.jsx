@@ -5,12 +5,13 @@ import {
   editSchedule, 
   deleteSchedule, 
   getExams,
-  getClasses // <-- Import getClasses
+  getClasses 
 } from '../utils/api';
 import axios from 'axios';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function ExamScheduleManager() {
-  // New state for classes and selected class
+  
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
 
@@ -28,13 +29,17 @@ export default function ExamScheduleManager() {
   });
   const [editId, setEditId] = useState(null);
 
+  const daysOfWeek = [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+  ];
+
   // Fetch classes on mount
   useEffect(() => {
     const fetchClasses = async () => {
       setIsLoading(true);
       try {
         const res = await getClasses();
-        setClasses(res.data || []); // adjust if your API returns {data: [...]}
+        setClasses(res.data || []); 
       } catch (err) {
         setError(err.message || 'Failed to fetch classes');
       } finally {
@@ -58,7 +63,7 @@ export default function ExamScheduleManager() {
         const [examsRes, subjectsRes] = await Promise.all([
           getExams(selectedClass), // pass selectedClass to getExams
           axios.get(
-            'http://localhost:5000/api/subjects?class=' + encodeURIComponent(selectedClass),
+            '${ApiUrl}/subjects?class=' + encodeURIComponent(selectedClass),
             { withCredentials: true }
           ).then(res => res.data)
         ]);
@@ -104,7 +109,22 @@ export default function ExamScheduleManager() {
   };
 
   const handleChange = e => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === 'exam_date') {
+      // Auto-fill day based on selected date
+      const dateObj = new Date(value);
+      const dayName = daysOfWeek[dateObj.getDay()] || '';
+      setForm(form => ({
+        ...form,
+        exam_date: value,
+        exam_day: dayName
+      }));
+    } else {
+      setForm(form => ({
+        ...form,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async e => {
@@ -120,7 +140,7 @@ export default function ExamScheduleManager() {
       } else {
         await addSchedule({
           exam_id: selectedExam,
-          class_name: selectedClass, // use selectedClass
+          class_name: selectedClass, 
           ...form
         });
       }

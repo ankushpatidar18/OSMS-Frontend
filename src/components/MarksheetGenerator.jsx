@@ -4,6 +4,7 @@ import axios from 'axios';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { LOGO_BASE64 } from '@/assets/base64';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 
  // School and marksheet info constants
@@ -184,7 +185,7 @@ export default function MarksheetGenerator() {
 
   // Fetch available classes on mount
   useEffect(() => {
-    axios.get('http://localhost:5000/api/classes', { withCredentials: true })
+    axios.get(`${ApiUrl}/classes`, { withCredentials: true })
       .then(res => setClasses(res.data))
       .catch(err => setError('Failed to fetch classes: ' + err.message));
   }, []);
@@ -201,7 +202,7 @@ export default function MarksheetGenerator() {
     
     try {
       const response = await axios.get(
-        `http://localhost:5000/api/marksheets/marksheet/${selectedClass}/${session}`,
+        `${ApiUrl}/marksheets/marksheet/${selectedClass}/${session}`,
         { withCredentials: true }
       );
       

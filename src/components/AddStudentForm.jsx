@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import axios from 'axios';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const classOptions = ['KG1', 'KG2', '1', '2', '3', '4', '5', '6', '7', '8'];
 const genderOptions = ['Male', 'Female'];
@@ -23,7 +24,7 @@ export default function AddStudentForm() {
     e.preventDefault();
     try {
       await axios.post(
-        'http://localhost:5000/api/students/full-register',
+        `${ApiUrl}/students/full-register`,
         formData,
         { withCredentials: true }
       );

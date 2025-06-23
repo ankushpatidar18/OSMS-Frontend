@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import axios from "axios";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const Students = () => {
   const [students, setStudents] = useState([])
@@ -36,7 +37,7 @@ const Students = () => {
       if (filters.admission_no) queryParams.append("admission_no", filters.admission_no); // changed
 
       const response = await axios.get(
-        `http://localhost:5000/api/students?${queryParams}`,
+        `${ApiUrl}/students?${queryParams}`,
         { withCredentials: true }
       );
       setStudents(response.data);
@@ -129,7 +130,7 @@ const Students = () => {
   const saveChanges = async (studentId) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/students/${studentId}`,
+        `${ApiUrl}/students/${studentId}`,
         editData,
         { withCredentials: true }
       );

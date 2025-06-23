@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setAdminInfo } from "@/redux/slices/adminSlice";
 import axios from "axios";
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function AdminLoginForm() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,7 @@ export default function AdminLoginForm() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/admin/login",
+        `${ApiUrl}/admin/login`,
         { email, password },
         { withCredentials: true }
       );

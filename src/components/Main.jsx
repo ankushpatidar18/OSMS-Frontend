@@ -21,6 +21,7 @@ import ExamScheduleManager from "./ExamScheduleManager";
 import AdmitCardGenerator from "./AdmitCardGenerator";
 import axios from "axios";
 import PromoteStudents from "./PromoteStudents";
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const appRouter = createBrowserRouter([
   {
@@ -98,7 +99,7 @@ const Main = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/admin/me", { withCredentials: true })
+      .get(`${ApiUrl}/admin/me`, { withCredentials: true })
       .then((res) => {
         const data = res.data;
         if (data && data.admin) {

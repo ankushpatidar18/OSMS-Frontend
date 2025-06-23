@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -13,6 +14,7 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Users, GraduationCap, Calendar, ArrowUpCircle } from 'lucide-react';
+
 
 const sessions = Array.from({ length: 11 }, (_, i) => {
   const start = 2023 + i;
@@ -37,7 +39,7 @@ export default function PromoteStudents() {
       setLoading(true);
       axios
         .get(
-          `http://localhost:5000/api/students/filter?session=${session}&class=${selectedClass}`,
+          `${ApiUrl}/students/filter?session=${session}&class=${selectedClass}`,
           { withCredentials: true }
         )
         .then((res) => {
@@ -77,7 +79,7 @@ export default function PromoteStudents() {
 
     try {
       await axios.post(
-        'http://localhost:5000/api/students/promote',
+        '${ApiUrl}/students/promote',
         {
           fromSession: session,
           fromClass: selectedClass,
@@ -93,7 +95,7 @@ export default function PromoteStudents() {
       setLoading(true);
       axios
         .get(
-          `http://localhost:5000/api/students/filter?session=${session}&class=${selectedClass}`,
+          `${ApiUrl}/students/filter?session=${session}&class=${selectedClass}`,
           { withCredentials: true }
         )
         .then((res) => setStudents(Array.isArray(res.data) ? res.data : []))

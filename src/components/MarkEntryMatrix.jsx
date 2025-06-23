@@ -10,6 +10,7 @@ import {
   SelectItem,
   SelectValue
 } from '@/components/ui/select';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const sessions = [
   '2023-2024',
@@ -38,14 +39,14 @@ export default function MarksEntryMatrix() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:5000/api/matrix/classes', { withCredentials: true })
+      .get('${ApiUrl}/matrix/classes', { withCredentials: true })
       .then(res => setClasses(res.data));
   }, []);
 
   useEffect(() => {
     if (selectedClass && selectedSession) {
       axios
-        .get(`http://localhost:5000/api/matrix/students?class=${selectedClass}&session=${selectedSession}`, { withCredentials: true })
+        .get(`${ApiUrl}/matrix/students?class=${selectedClass}&session=${selectedSession}`, { withCredentials: true })
         .then(res => setStudents(res.data));
     }
   }, [selectedClass, selectedSession]);
@@ -53,13 +54,13 @@ export default function MarksEntryMatrix() {
   useEffect(() => {
     if (selectedClass && selectedSession && selectedStudent) {
       axios
-        .get(`http://localhost:5000/api/matrix/subjects/${selectedClass}`, { withCredentials: true })
+        .get(`${ApiUrl}/matrix/subjects/${selectedClass}`, { withCredentials: true })
         .then(res => setSubjects(res.data));
       axios
-        .get(`http://localhost:5000/api/matrix/exams/${selectedClass}/${selectedSession}`, { withCredentials: true })
+        .get(`${ApiUrl}/matrix/exams/${selectedClass}/${selectedSession}`, { withCredentials: true })
         .then(res => setExams(res.data));
       axios
-        .get(`http://localhost:5000/api/matrix/marks?student_id=${selectedStudent}`, { withCredentials: true })
+        .get(`${ApiUrl}/matrix/marks?student_id=${selectedStudent}`, { withCredentials: true })
         .then(res => setExistingMarks(res.data));
     }
   }, [selectedStudent, selectedClass, selectedSession]);
@@ -89,7 +90,7 @@ export default function MarksEntryMatrix() {
     }));
 
     await axios.post(
-      'http://localhost:5000/api/matrix/marks',
+      '${ApiUrl}/matrix/marks',
       {
         student_id: selectedStudent,
         marks: payload,

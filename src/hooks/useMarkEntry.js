@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function useMarkEntry() {
   const [selectedSession, setSelectedSession] = useState("");
@@ -31,7 +32,7 @@ export default function useMarkEntry() {
       setClasses([]);
       return;
     }
-    axios.get("http://localhost:5000/api/classes", {
+    axios.get(`${ApiUrl}/classes`, {
       params: { session: selectedSession },
       withCredentials: true
     })
@@ -42,7 +43,7 @@ export default function useMarkEntry() {
   // Fetch subjects for selected class and session
   useEffect(() => {
     if (selectedClass && selectedSession) {
-      axios.get(`http://localhost:5000/api/subjects/for-class/${selectedClass}`, {
+      axios.get(`${ApiUrl}/subjects/for-class/${selectedClass}`, {
         params: { session: selectedSession },
         withCredentials: true
       })
@@ -56,7 +57,7 @@ export default function useMarkEntry() {
   // Fetch exams for selected subject (class_subject_id)
   useEffect(() => {
     if (selectedSubject) {
-      axios.get(`http://localhost:5000/api/exams/for-class-subject/${selectedSubject}`, {
+      axios.get(`${ApiUrl}/exams/for-class-subject/${selectedSubject}`, {
         withCredentials: true
       })
         .then(res => setExams(res.data))
@@ -69,7 +70,7 @@ export default function useMarkEntry() {
   // Fetch students for selected class and session
   useEffect(() => {
     if (selectedClass && selectedSession) {
-      axios.get(`http://localhost:5000/api/students/for-class/${selectedClass}`, {
+      axios.get(`${ApiUrl}/students/for-class/${selectedClass}`, {
         params: { session: selectedSession },
         withCredentials: true
       })
@@ -83,7 +84,7 @@ export default function useMarkEntry() {
   // Fetch marks for selected subject (class_subject_id) and exam
   useEffect(() => {
     if (selectedSubject && selectedExam && students.length > 0) {
-      axios.get(`http://localhost:5000/api/marks/entry-status`, {
+      axios.get(`${ApiUrl}/marks/entry-status`, {
         params: { class_subject_id: selectedSubject, exam_id: selectedExam },
         withCredentials: true
       })
@@ -149,7 +150,7 @@ export default function useMarkEntry() {
         exam_id: selectedExam,
         marks: validMarks
       };
-      await axios.post("http://localhost:5000/api/marks", payload, { withCredentials: true });
+      await axios.post("${ApiUrl}/marks", payload, { withCredentials: true });
       setIsLoading(false);
       return true;
     } catch (err) {

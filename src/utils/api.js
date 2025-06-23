@@ -1,25 +1,25 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 // Always send cookies with every request
 axios.defaults.withCredentials = true;
 
-export const getClasses = () => axios.get(`${API_URL}/classes`);
-export const getExams = () => axios.get(`${API_URL}/exams`);
+export const getClasses = () => axios.get(`${ApiUrl}/classes`);
+export const getExams = (className) => axios.get(`${ApiUrl}/exams`, { params: className ? { class: className } : undefined });
 export const getAdmitCardData = (className, examId, session) =>
-  axios.get(`${API_URL}/admit-card-data`, {
+  axios.get(`${ApiUrl}/admit-card-data`, {
     params: { className, examId, session }
   });
 
 export const getSchedules = (className, examId) =>
-  axios.get(`${API_URL}/exam-schedules`, { params: { className, examId } });
+  axios.get(`${ApiUrl}/exam-schedules`, { params: { className, examId } });
 
 export const addSchedule = (data) =>
-  axios.post(`${API_URL}/exam-schedules`, data);
+  axios.post(`${ApiUrl}/exam-schedules`, data);
 
 export const editSchedule = (data) =>
-  axios.put(`${API_URL}/exam-schedules`, data);
+  axios.put(`${ApiUrl}/exam-schedules`, data);
 
 export const deleteSchedule = (schedule_id) =>
-  axios.delete(`${API_URL}/exam-schedules/${schedule_id}`);
+  axios.delete(`${ApiUrl}/exam-schedules/${schedule_id}`);

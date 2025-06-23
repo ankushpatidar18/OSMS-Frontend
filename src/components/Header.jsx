@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAdminInfo } from "@/redux/slices/adminSlice";
 import mkeplogo from "@/assets/mkeplogo.png"; 
+import axios from "axios";
+
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Header() {
   const [showRoles, setShowRoles] = useState(false);
@@ -27,13 +30,13 @@ export default function Header() {
 
   const handleLogout = async () => {
     try {
-      //have to put url into .env file
-      const res = await fetch("http://localhost:5000/api/admin/logout", {
-        method: "POST",
-        credentials: "include", 
-      });
+      const res = await axios.post(
+        `${ApiUrl}/admin/logout`,
+        {},
+        { withCredentials: true }
+      );
 
-      if (res.ok) {
+      if (res.status === 200) {
         dispatch(clearAdminInfo());
         navigate("/");
       }

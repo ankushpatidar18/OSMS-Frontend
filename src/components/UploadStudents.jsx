@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, FileSpreadsheet, CheckCircle, XCircle, AlertCircle } from "lucide-react"
 import axios from "axios"
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const UploadStudents = () => {
   const [file, setFile] = useState(null)
@@ -56,7 +57,7 @@ const UploadStudents = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/upload-students",
+        `${ApiUrl}/upload-students`,
         formData,
         { withCredentials: true }
       )
@@ -204,10 +205,16 @@ const UploadStudents = () => {
           <div className="bg-gray-50 rounded-lg p-4">
             <h4 className="text-sm font-semibold text-gray-800 mb-2">File Requirements:</h4>
             <ul className="text-xs text-gray-600 space-y-1">
-              <li>• Excel format (.xlsx or .xls)</li>
+              <li>• Excel format (<b>.xlsx</b> or <b>.xls</b>)</li>
               <li>• Maximum file size: 10MB</li>
-              <li>• Include columns: Name, Email, Phone, Class, etc.</li>
-              <li>• First row should contain column headers</li>
+              <li>• <b>First row must contain column headers with <span className="text-blue-700">exactly these names and order</span>:</b></li>
+              <li className="pl-4">
+                <span className="font-mono text-xs block bg-white border rounded p-2 mt-1">
+                  Name, Gender, DOB, AADHAAR No., Address, Pincode, Student State Code, Class, Medium Of Instruction, Session, Mobile No., Father Name, Mother Name, Admission No., Admission Date, Height in CMs, Weight in KGs, Social Category
+                </span>
+              </li>
+              <li>• All columns are required, even if some values are empty.</li>
+              <li>• Dates should be in a valid Excel date format.</li>
             </ul>
           </div>
         </CardContent>
