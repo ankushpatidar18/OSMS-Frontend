@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getClasses, getExams, getAdmitCardData } from '../utils/api';
 import AdmitCardPreview from './AdmitCardPreview';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const SESSION_OPTIONS = [
   "2023-2024", "2024-2025", "2025-2026", "2026-2027", "2027-2028",
@@ -32,7 +34,8 @@ export default function AdmitCardGenerator() {
   }, []);
 
   // Handle admit card generation
-  const handleGenerate = async () => {
+  const handleGenerate = async (e) => {
+    e?.preventDefault();
     if (!selectedSession || !selectedClass || !selectedExam) return;
     setLoading(true);
     setError('');
@@ -41,7 +44,7 @@ export default function AdmitCardGenerator() {
       const res = await getAdmitCardData(selectedClass, selectedExam, selectedSession);
       setAdmitData(res.data);
     } catch (err) {
-      setError('Failed to fetch admit card data.' + err.message);
+      setError('Failed to fetch admit card data.' + (err.message ? ` (${err.message})` : ''));
     } finally {
       setLoading(false);
     }
@@ -51,63 +54,85 @@ export default function AdmitCardGenerator() {
     <div className="p-6 mt-4 max-w-2xl mx-auto bg-white rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Generate Admit Cards</h2>
 
-      <div className="flex gap-4 mb-4">
+      <form className="flex flex-wrap gap-4 mb-4 items-end" onSubmit={handleGenerate}>
         {/* Session Dropdown */}
-        <select
-          className="border p-2 rounded"
-          value={selectedSession}
-          onChange={e => setSelectedSession(e.target.value)}
-          aria-label="Select Session"
-        >
-          <option value="">Select Session</option>
-          {SESSION_OPTIONS.map(session => (
-            <option key={session} value={session}>{session}</option>
-          ))}
-        </select>
+        <div className="flex-1 min-w-[160px]">
+          <label className="block text-sm font-medium mb-1">Session<span className="text-red-500">*</span></label>
+          <Select
+            value={selectedSession}
+            onValueChange={setSelectedSession}
+            disabled={fetchingDropdowns}
+            required
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={fetchingDropdowns ? "Loading..." : "Select Session"} />
+            </SelectTrigger>
+            <SelectContent>
+              {SESSION_OPTIONS.map(session => (
+                <SelectItem key={session} value={session}>{session}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Class Dropdown */}
-        <select
-          className="border p-2 rounded"
-          value={selectedClass}
-          onChange={e => setSelectedClass(e.target.value)}
-          aria-label="Select Class"
-          disabled={fetchingDropdowns}
-        >
-          <option value="">Select Class</option>
-          {classes.map(c => (
-            <option key={c.class} value={c.class}>{c.class}</option>
-          ))}
-        </select>
+        <div className="flex-1 min-w-[120px]">
+          <label className="block text-sm font-medium mb-1">Class<span className="text-red-500">*</span></label>
+          <Select
+            value={selectedClass}
+            onValueChange={setSelectedClass}
+            disabled={fetchingDropdowns}
+            required
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={fetchingDropdowns ? "Loading..." : "Select Class"} />
+            </SelectTrigger>
+            <SelectContent>
+              {classes.map(c => (
+                <SelectItem key={c.class} value={c.class}>{c.class}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Exam Dropdown */}
-        <select
-          className="border p-2 rounded"
-          value={selectedExam}
-          onChange={e => setSelectedExam(e.target.value)}
-          aria-label="Select Exam"
-          disabled={fetchingDropdowns}
-        >
-          <option value="">Select Exam</option>
-          {exams.map(e => (
-            <option key={e.exam_id} value={e.exam_id}>
-              {e.name} ({e.session})({e.class_group})
-            </option>
-          ))}
-        </select>
+        <div className="flex-1 min-w-[160px]">
+          <label className="block text-sm font-medium mb-1">Exam<span className="text-red-500">*</span></label>
+          <Select
+            value={selectedExam}
+            onValueChange={setSelectedExam}
+            disabled={fetchingDropdowns}
+            required
+          >
+            <SelectTrigger>
+              <SelectValue placeholder={fetchingDropdowns ? "Loading..." : "Select Exam"} />
+            </SelectTrigger>
+            <SelectContent>
+              {exams.map(e => (
+                <SelectItem key={e.exam_id} value={e.exam_id}>
+                  {e.name} ({e.session}) ({e.class_group})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Generate Button */}
-        <button
-          className={`px-4 py-2 rounded text-white ${loading || fetchingDropdowns || !selectedSession || !selectedClass || !selectedExam ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-          onClick={handleGenerate}
+        <Button
+          type="submit"
+          className="h-11"
           disabled={loading || fetchingDropdowns || !selectedSession || !selectedClass || !selectedExam}
-          aria-disabled={loading || fetchingDropdowns || !selectedSession || !selectedClass || !selectedExam}
         >
           {loading ? 'Generating...' : 'Generate'}
-        </button>
-      </div>
+        </Button>
+      </form>
 
       {/* Error Message */}
-      {error && <div className="text-red-600 mb-2">{error}</div>}
+      {error && (
+        <div className="text-red-600 mb-2" aria-live="polite">
+          {error}
+        </div>
+      )}
 
       {/* Admit Card Preview */}
       {admitData && <AdmitCardPreview data={admitData} />}

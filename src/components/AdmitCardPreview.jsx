@@ -2,8 +2,8 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { LOGO_BASE64 } from '@/assets/base64';
+import { Button } from "@/components/ui/button"; // Use your UI Button if available
 
-// School and exam info constants
 const SCHOOL_INFO = {
   name: `MATRA KRIPA EDUCATION POINT`,
   location: "BADAGAON",
@@ -21,7 +21,6 @@ const INSTRUCTIONS = [
 
 const SCHOOL_LOGO = LOGO_BASE64;
 
-// Utility: Format ISO date to DD-MM-YYYY
 const formatDate = (dateString) => {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -43,10 +42,10 @@ export default function AdmitCardPreview({ data }) {
 
       // Logo
       doc.addImage(SCHOOL_LOGO, 'PNG', 18, 11, 48, 40);
-
+     
       // School name and location
       doc.setFontSize(20);
-      doc.setFont('serif', 'bold');
+      doc.setFont(undefined, 'bold');
       doc.setTextColor(128, 0, 128); // Purple
       doc.text(SCHOOL_INFO.name, 60, 20);
       doc.text(SCHOOL_INFO.location, 110, 28, { align: 'center' });
@@ -129,12 +128,14 @@ export default function AdmitCardPreview({ data }) {
 
   return (
     <div className="mt-6">
-      <button
+      <Button
+        aria-label="Download Admit Cards PDF"
         className="bg-green-600 text-white px-4 py-2 rounded"
         onClick={generatePDF}
+        disabled={!students || students.length === 0}
       >
         Download Admit Cards PDF ({students.length} students)
-      </button>
+      </Button>
       <div className="mt-4 text-gray-600">
         <p>
           <b>Preview:</b> Click the button above to download admit cards for all students in the selected class.

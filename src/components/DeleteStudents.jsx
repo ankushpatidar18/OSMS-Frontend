@@ -13,6 +13,8 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Users, GraduationCap, Calendar, Trash2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
 const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const sessions = Array.from({ length: 11 }, (_, i) => {
@@ -28,6 +30,9 @@ export default function DeleteStudents() {
   const [students, setStudents] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMsg, setDialogMsg] = useState('');
+  const [dialogType, setDialogType] = useState('info'); // 'info', 'confirm', 'success', 'error'
 
   useEffect(() => {
     if (session && selectedClass) {
@@ -63,18 +68,26 @@ export default function DeleteStudents() {
     }
   };
 
-  const deleteSelected = async () => {
-    if (selectedIds.length === 0) return alert('No students selected.');
-    
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete ${selectedIds.length} student(s)? This action cannot be undone.`
-    );
-    
-    if (!confirmDelete) return;
+  // Show confirmation dialog instead of window.confirm
+  const handleDeleteClick = () => {
+    if (selectedIds.length === 0) {
+      setDialogMsg('No students selected.');
+      setDialogType('info');
+      setDialogOpen(true);
+      return;
+    }
+    setDialogMsg(`Are you sure you want to delete ${selectedIds.length} student(s)? This action cannot be undone.`);
+    setDialogType('confirm');
+    setDialogOpen(true);
+  };
 
+  // Actual deletion logic
+  const deleteSelected = async () => {
+    setDialogOpen(false);
+    setLoading(true);
     try {
       await axios.delete(
-        '${ApiUrl}/students/delete-many',
+        `${ApiUrl}/students/delete-many`,
         {
           data: { studentIds: selectedIds },
           withCredentials: true
@@ -82,9 +95,15 @@ export default function DeleteStudents() {
       );
       setStudents((prev) => prev.filter((s) => !selectedIds.includes(s.student_id)));
       setSelectedIds([]);
-      alert('Selected students deleted successfully.');
+      setDialogMsg('Selected students deleted successfully.');
+      setDialogType('success');
+      setDialogOpen(true);
     } catch (err) {
-      alert('Failed to delete students: ' + err.message);
+      setDialogMsg('Failed to delete students: ' + (err.message || 'Unknown error'));
+      setDialogType('error');
+      setDialogOpen(true);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -255,8 +274,8 @@ export default function DeleteStudents() {
               }
             </div>
             <Button 
-              onClick={deleteSelected} 
-              disabled={selectedIds.length === 0}
+              onClick={handleDeleteClick} 
+              disabled={selectedIds.length === 0 || loading}
               className="bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <Trash2 className="w-4 h-4" />
@@ -265,6 +284,44 @@ export default function DeleteStudents() {
           </div>
         </div>
       )}
+
+      {/* Dialog for Confirmation and Feedback */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {dialogType === 'confirm'
+                ? 'Confirm Deletion'
+                : dialogType === 'success'
+                ? 'Success'
+                : dialogType === 'error'
+                ? 'Error'
+                : 'Info'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">{dialogMsg}</div>
+          <DialogFooter>
+            {dialogType === 'confirm' ? (
+              <>
+                <Button
+                  onClick={() => setDialogOpen(false)}
+                  variant="outline"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={deleteSelected}
+                  className="bg-red-600 hover:bg-red-700 text-white"
+                >
+                  Yes, Delete
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => setDialogOpen(false)}>OK</Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

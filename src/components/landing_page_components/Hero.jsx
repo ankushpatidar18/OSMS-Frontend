@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { GraduationCap, Users, Award, BookOpen } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { GraduationCap, Users, Award, BookOpen } from "lucide-react";
 
 export default function Hero() {
   return (
@@ -12,12 +12,13 @@ export default function Hero() {
               src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&h=400&fit=crop"
               alt="Matra Kripa Education Point School Building"
               className="w-full h-96 object-cover rounded-lg shadow-xl"
+              loading="eager"
             />
             <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-lg">
               <div className="flex items-center space-x-2">
-                <Award className="h-8 w-8 text-yellow-500" />
+                <Award className="h-8 w-8 text-yellow-500" aria-hidden="true" />
                 <div>
-                  <p className="font-semibold text-sm"> MP Board Affiliated</p>
+                  <p className="font-semibold text-sm">MP Board Affiliated</p>
                   <p className="text-xs text-gray-600">Since 2016</p>
                 </div>
               </div>
@@ -27,7 +28,9 @@ export default function Hero() {
           {/* School Information */}
           <div className="space-y-6">
             <div>
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">Welcome to Matra Kripa Education Point,Badagaon</h2>
+              <h1 className="text-4xl font-bold text-gray-800 mb-4">
+                Welcome to Matra Kripa Education Point, Badagaon
+              </h1>
               <p className="text-lg text-gray-600 leading-relaxed">
                 Nurturing young minds for over 10 years, we are committed to providing quality education that shapes
                 character, builds confidence, and prepares students for a bright future. Our holistic approach combines
@@ -39,7 +42,7 @@ export default function Hero() {
             <div className="grid grid-cols-2 gap-4">
               <div className="flex items-center space-x-3">
                 <div className="bg-blue-100 p-2 rounded-full">
-                  <Users className="h-5 w-5 text-blue-600" />
+                  <Users className="h-5 w-5 text-blue-600" aria-hidden="true" />
                 </div>
                 <div>
                   <p className="font-semibold">1200+ Students</p>
@@ -48,7 +51,7 @@ export default function Hero() {
               </div>
               <div className="flex items-center space-x-3">
                 <div className="bg-green-100 p-2 rounded-full">
-                  <GraduationCap className="h-5 w-5 text-green-600" />
+                  <GraduationCap className="h-5 w-5 text-green-600" aria-hidden="true" />
                 </div>
                 <div>
                   <p className="font-semibold">20+ Teachers</p>
@@ -57,7 +60,7 @@ export default function Hero() {
               </div>
               <div className="flex items-center space-x-3">
                 <div className="bg-purple-100 p-2 rounded-full">
-                  <BookOpen className="h-5 w-5 text-purple-600" />
+                  <BookOpen className="h-5 w-5 text-purple-600" aria-hidden="true" />
                 </div>
                 <div>
                   <p className="font-semibold">Classes 1-8</p>
@@ -66,7 +69,7 @@ export default function Hero() {
               </div>
               <div className="flex items-center space-x-3">
                 <div className="bg-orange-100 p-2 rounded-full">
-                  <Award className="h-5 w-5 text-orange-600" />
+                  <Award className="h-5 w-5 text-orange-600" aria-hidden="true" />
                 </div>
                 <div>
                   <p className="font-semibold">98% Results</p>
@@ -77,16 +80,20 @@ export default function Hero() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                Apply for Admission
+              <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
+                <a href="#admission" aria-label="Apply for Admission">
+                  Apply for Admission
+                </a>
               </Button>
-              <Button variant="outline" size="lg">
-                Virtual School Tour
+              <Button asChild variant="outline" size="lg">
+                <a href="#virtual-tour" aria-label="Virtual School Tour">
+                  Virtual School Tour
+                </a>
               </Button>
             </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

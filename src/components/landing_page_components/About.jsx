@@ -1,4 +1,4 @@
-import { Target, Heart, Star, Trophy } from "lucide-react"
+import { Target, Heart, Star, Trophy } from "lucide-react";
 
 export default function About() {
   return (
@@ -14,8 +14,11 @@ export default function About() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div className="text-center">
-            <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Target className="h-8 w-8 text-blue-600" />
+            <div
+              className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              aria-label="Mission Icon"
+            >
+              <Target className="h-8 w-8 text-blue-600" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
             <p className="text-gray-600">
@@ -24,8 +27,11 @@ export default function About() {
           </div>
 
           <div className="text-center">
-            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Heart className="h-8 w-8 text-green-600" />
+            <div
+              className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              aria-label="Values Icon"
+            >
+              <Heart className="h-8 w-8 text-green-600" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Our Values</h3>
             <p className="text-gray-600">
@@ -34,8 +40,11 @@ export default function About() {
           </div>
 
           <div className="text-center">
-            <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Star className="h-8 w-8 text-purple-600" />
+            <div
+              className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              aria-label="Vision Icon"
+            >
+              <Star className="h-8 w-8 text-purple-600" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Our Vision</h3>
             <p className="text-gray-600">
@@ -45,8 +54,11 @@ export default function About() {
           </div>
 
           <div className="text-center">
-            <div className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Trophy className="h-8 w-8 text-orange-600" />
+            <div
+              className="bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+              aria-label="Achievement Icon"
+            >
+              <Trophy className="h-8 w-8 text-orange-600" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Our Achievement</h3>
             <p className="text-gray-600">
@@ -57,5 +69,5 @@ export default function About() {
         </div>
       </div>
     </section>
-  )
+  );
 }

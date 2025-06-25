@@ -1,4 +1,4 @@
-import { Microscope, Palette, Music, Dumbbell, Globe, Computer } from "lucide-react"
+import { Microscope, Palette, Music, Dumbbell, Globe, Computer } from "lucide-react";
 
 export default function Features() {
   const features = [
@@ -32,10 +32,10 @@ export default function Features() {
       title: "Smart Classes",
       description: "Interactive smart boards and digital learning tools in every classroom.",
     },
-  ]
+  ];
 
   return (
-    <section className="py-16 bg-white">
+    <section id="features" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Facilities</h2>
@@ -46,9 +46,14 @@ export default function Features() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {features.map((feature, index) => (
-            <div key={index} className="text-center p-6 rounded-lg hover:shadow-lg transition-shadow">
+            <div
+              key={index}
+              className="text-center p-6 rounded-lg hover:shadow-lg transition-shadow"
+              tabIndex={0}
+              aria-label={feature.title}
+            >
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <feature.icon className="h-8 w-8 text-blue-600" />
+                <feature.icon className="h-8 w-8 text-blue-600" aria-hidden="true" />
               </div>
               <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
               <p className="text-gray-600">{feature.description}</p>
@@ -57,5 +62,5 @@ export default function Features() {
         </div>
       </div>
     </section>
-  )
+  );
 }

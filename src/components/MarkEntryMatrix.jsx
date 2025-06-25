@@ -10,20 +10,13 @@ import {
   SelectItem,
   SelectValue
 } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
 const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 const sessions = [
-  '2023-2024',
-  '2024-2025',
-  '2025-2026',
-  '2026-2027',
-  '2027-2028',
-  '2028-2029',
-  '2029-2030',
-  '2030-2031',
-  '2031-2032',
-  '2032-2033',
-  '2033-2034'
+  '2023-2024','2024-2025','2025-2026','2026-2027','2027-2028',
+  '2028-2029','2029-2030','2030-2031','2031-2032','2032-2033','2033-2034'
 ];
 
 export default function MarksEntryMatrix() {
@@ -36,11 +29,16 @@ export default function MarksEntryMatrix() {
   const [exams, setExams] = useState([]);
   const [marks, setMarks] = useState({});
   const [existingMarks, setExistingMarks] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMsg, setDialogMsg] = useState("");
+  const [dialogType, setDialogType] = useState("info");
 
   useEffect(() => {
     axios
-      .get('${ApiUrl}/matrix/classes', { withCredentials: true })
-      .then(res => setClasses(res.data));
+      .get(`${ApiUrl}/matrix/classes`, { withCredentials: true })
+      .then(res => setClasses(Array.isArray(res.data) ? res.data : []))
+      .catch(() => setClasses([]));
   }, []);
 
   useEffect(() => {
@@ -81,31 +79,45 @@ export default function MarksEntryMatrix() {
   };
 
   const handleSubmit = async () => {
-    const payload = subjects.flatMap(subject => exams.map(exam => {
-      return {
+    if (!selectedStudent || !subjects.length || !exams.length) {
+      setDialogMsg("Please select class, session, student, and ensure subjects & exams are available.");
+      setDialogType("error");
+      setDialogOpen(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const payload = subjects.flatMap(subject => exams.map(exam => ({
         class_subject_id: subject.class_subject_id,
         exam_id: exam.exam_id,
         marks_obtained: parseFloat(marks[`${subject.class_subject_id}-${exam.exam_id}`]) || 0
-      };
-    }));
-
-    await axios.post(
-      '${ApiUrl}/matrix/marks',
-      {
-        student_id: selectedStudent,
-        marks: payload,
-        recorded_by: 1
-      },
-      { withCredentials: true }
-    );
-    alert('Marks saved successfully!');
+      })));
+      await axios.post(
+        `${ApiUrl}/matrix/marks`,
+        {
+          student_id: selectedStudent,
+          marks: payload,
+          recorded_by: 1
+        },
+        { withCredentials: true }
+      );
+      setDialogMsg('Marks saved successfully!');
+      setDialogType("success");
+      setDialogOpen(true);
+    } catch (err) {
+      setDialogMsg('Failed to save marks. Please try again.' + err.message);
+      setDialogType("error");
+      setDialogOpen(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="p-4 space-y-6">
       <Card>
         <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
-          <Select onValueChange={setSelectedSession} defaultValue={selectedSession}>
+          <Select onValueChange={setSelectedSession} value={selectedSession}>
             <SelectTrigger>
               <SelectValue placeholder="Select Session" />
             </SelectTrigger>
@@ -116,18 +128,18 @@ export default function MarksEntryMatrix() {
             </SelectContent>
           </Select>
 
-          <Select onValueChange={setSelectedClass}>
+          <Select onValueChange={setSelectedClass} value={selectedClass}>
             <SelectTrigger>
               <SelectValue placeholder="Select Class" />
             </SelectTrigger>
             <SelectContent>
-              {classes.map(cls => (
+              {(Array.isArray(classes) ? classes : []).map(cls => (
                 <SelectItem key={cls} value={cls}>{cls}</SelectItem>
               ))}
             </SelectContent>
           </Select>
 
-          <Select onValueChange={setSelectedStudent}>
+          <Select onValueChange={setSelectedStudent} value={selectedStudent}>
             <SelectTrigger>
               <SelectValue placeholder="Select Student" />
             </SelectTrigger>
@@ -142,7 +154,7 @@ export default function MarksEntryMatrix() {
         </CardContent>
       </Card>
 
-      {subjects.length > 0 && exams.length > 0 && (
+      {subjects.length > 0 && exams.length > 0 ? (
         <div className="overflow-auto border rounded-lg">
           <table className="min-w-full text-sm text-left">
             <thead className="bg-gray-100">
@@ -161,8 +173,12 @@ export default function MarksEntryMatrix() {
                     <td key={exam.exam_id} className="p-2 border text-center">
                       <Input
                         className="w-20 text-center"
+                        aria-label={`Marks for ${subject.subject_name} in ${exam.name}`}
                         value={marks[`${subject.class_subject_id}-${exam.exam_id}`] || ''}
                         onChange={e => handleInput(subject.class_subject_id, exam.exam_id, e.target.value)}
+                        type="number"
+                        min="0"
+                        max={exam.total_marks}
                       />
                     </td>
                   ))}
@@ -171,13 +187,36 @@ export default function MarksEntryMatrix() {
             </tbody>
           </table>
         </div>
+      ) : (
+        selectedStudent && (
+          <div className="text-center text-gray-500">
+            No subjects or exams found for this class/session/student.
+          </div>
+        )
       )}
 
       {selectedStudent && (
         <div className="text-right">
-          <Button onClick={handleSubmit}>Save Marks</Button>
+          <Button onClick={handleSubmit} disabled={loading}>
+            {loading ? "Saving..." : "Save Marks"}
+          </Button>
         </div>
       )}
+
+      {/* Dialog for feedback */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {dialogType === "success" ? "Success" : dialogType === "error" ? "Error" : "Info"}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">{dialogMsg}</div>
+          <DialogFooter>
+            <Button onClick={() => setDialogOpen(false)}>OK</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

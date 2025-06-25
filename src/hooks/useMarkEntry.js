@@ -125,40 +125,41 @@ export default function useMarkEntry() {
       )
     );
   };
+const submitMarks = async () => {
+  if (!selectedSubject || !selectedExam) {
+    setError('Please select subject and exam');
+    return false;
+  }
+  setIsLoading(true);
+  setError(null);
+  try {
+    const validMarks = marksData
+      .filter(item => item.marks_obtained !== '' && !isNaN(parseFloat(item.marks_obtained)))
+      .map(item => ({
+        student_id: item.student_id,
+        marks_obtained: parseFloat(item.marks_obtained)
+      }));
+    if (validMarks.length === 0) {
+      setError('No valid marks to submit');
+      setIsLoading(false);
+      return false;
+    }
+    const payload = {
+      class_subject_id: selectedSubject,
+      exam_id: selectedExam,
+      marks: validMarks
+    };
+    await axios.post(`${ApiUrl}/marks`, payload, { withCredentials: true });
+    setIsLoading(false);
+    setError(null); // <-- clear error on success
+    return true;
+  } catch (err) {
+    setError('Failed to submit marks: ' + (err?.response?.data?.message || err.message));
+    setIsLoading(false);
+    return false;
+  }
+};
 
-  const submitMarks = async () => {
-    if (!selectedSubject || !selectedExam) {
-      setError('Please select subject and exam');
-      return false;
-    }
-    setIsLoading(true);
-    setError(null);
-    try {
-      const validMarks = marksData
-        .filter(item => item.marks_obtained !== '' && !isNaN(parseFloat(item.marks_obtained)))
-        .map(item => ({
-          student_id: item.student_id,
-          marks_obtained: parseFloat(item.marks_obtained)
-        }));
-      if (validMarks.length === 0) {
-        setError('No valid marks to submit');
-        setIsLoading(false);
-        return false;
-      }
-      const payload = {
-        class_subject_id: selectedSubject,
-        exam_id: selectedExam,
-        marks: validMarks
-      };
-      await axios.post("${ApiUrl}/marks", payload, { withCredentials: true });
-      setIsLoading(false);
-      return true;
-    } catch (err) {
-      setError('Failed to submit marks' + err.message);
-      setIsLoading(false);
-      return false;
-    }
-  };
 
   return {
     selectedSession,

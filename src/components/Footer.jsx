@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react"
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -23,17 +23,17 @@ export default function Footer() {
               and builds confidence.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="h-5 w-5" />
+              <a href="https://facebook.com/" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
+                <Facebook className="h-5 w-5" aria-hidden="true" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="h-5 w-5" />
+              <a href="https://twitter.com/" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors">
+                <Twitter className="h-5 w-5" aria-hidden="true" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Instagram className="h-5 w-5" />
+              <a href="https://instagram.com/" aria-label="Instagram" className="text-gray-400 hover:text-white transition-colors">
+                <Instagram className="h-5 w-5" aria-hidden="true" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Youtube className="h-5 w-5" />
+              <a href="https://youtube.com/" aria-label="YouTube" className="text-gray-400 hover:text-white transition-colors">
+                <Youtube className="h-5 w-5" aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -42,36 +42,12 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Admission
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Academics
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Facilities
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Events
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Gallery
-                </a>
-              </li>
+              <li><a href="/about" className="text-gray-300 hover:text-white transition-colors">About Us</a></li>
+              <li><a href="/admission" className="text-gray-300 hover:text-white transition-colors">Admission</a></li>
+              <li><a href="/academics" className="text-gray-300 hover:text-white transition-colors">Academics</a></li>
+              <li><a href="/facilities" className="text-gray-300 hover:text-white transition-colors">Facilities</a></li>
+              <li><a href="/events" className="text-gray-300 hover:text-white transition-colors">Events</a></li>
+              <li><a href="/gallery" className="text-gray-300 hover:text-white transition-colors">Gallery</a></li>
             </ul>
           </div>
 
@@ -79,36 +55,12 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Support</h4>
             <ul className="space-y-2">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Help Center
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Contact Support
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Student Portal
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Parent Portal
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Fee Payment
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                  Downloads
-                </a>
-              </li>
+              <li><a href="/help" className="text-gray-300 hover:text-white transition-colors">Help Center</a></li>
+              <li><a href="/contact" className="text-gray-300 hover:text-white transition-colors">Contact Support</a></li>
+              <li><a href="/student-portal" className="text-gray-300 hover:text-white transition-colors">Student Portal</a></li>
+              <li><a href="/parent-portal" className="text-gray-300 hover:text-white transition-colors">Parent Portal</a></li>
+              <li><a href="/fee-payment" className="text-gray-300 hover:text-white transition-colors">Fee Payment</a></li>
+              <li><a href="/downloads" className="text-gray-300 hover:text-white transition-colors">Downloads</a></li>
             </ul>
           </div>
 
@@ -117,22 +69,21 @@ export default function Footer() {
             <h4 className="text-lg font-semibold mb-4">Contact Info</h4>
             <div className="space-y-3">
               <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-gray-400 mt-0.5" />
+                <MapPin className="h-5 w-5 text-gray-400 mt-0.5" aria-hidden="true" />
                 <div>
                   <p className="text-gray-300 text-sm">
-                    WARD 05, Badagaon
-                    <br />
+                    WARD 05, Badagaon<br />
                     Madhya Pradesh 465445
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="h-5 w-5 text-gray-400" />
-                <p className="text-gray-300 text-sm">+91 8349307262</p>
+                <Phone className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <a href="tel:+918349307262" className="text-gray-300 text-sm hover:underline">+91 8349307262</a>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="h-5 w-5 text-gray-400" />
-                <p className="text-gray-300 text-sm"> mkepbadagaon@gmail.com</p>
+                <Mail className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <a href="mailto:mkepbadagaon@gmail.com" className="text-gray-300 text-sm hover:underline">mkepbadagaon@gmail.com</a>
               </div>
             </div>
           </div>
@@ -144,19 +95,13 @@ export default function Footer() {
               © {new Date().getFullYear()} Matra Kripa Education Point. All rights reserved.
             </p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                Privacy Policy
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                Terms of Service
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">
-                Cookie Policy
-              </a>
+              <a href="/privacy-policy" className="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+              <a href="/terms-of-service" className="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+              <a href="/cookie-policy" className="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
             </div>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

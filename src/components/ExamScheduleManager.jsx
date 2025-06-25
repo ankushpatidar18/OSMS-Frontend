@@ -8,13 +8,12 @@ import {
   getClasses 
 } from '../utils/api';
 import axios from 'axios';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function ExamScheduleManager() {
-  
   const [classes, setClasses] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
-
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState('');
   const [schedules, setSchedules] = useState([]);
@@ -28,6 +27,12 @@ export default function ExamScheduleManager() {
     exam_time: '09:00 to 12:00'
   });
   const [editId, setEditId] = useState(null);
+
+  // Dialog state
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMsg, setDialogMsg] = useState('');
+  const [dialogType, setDialogType] = useState('info');
+  const [pendingDeleteId, setPendingDeleteId] = useState(null);
 
   const daysOfWeek = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
@@ -61,9 +66,9 @@ export default function ExamScheduleManager() {
       setIsLoading(true);
       try {
         const [examsRes, subjectsRes] = await Promise.all([
-          getExams(selectedClass), // pass selectedClass to getExams
+          getExams(selectedClass),
           axios.get(
-            '${ApiUrl}/subjects?class=' + encodeURIComponent(selectedClass),
+            `${ApiUrl}/subjects?class=` + encodeURIComponent(selectedClass),
             { withCredentials: true }
           ).then(res => res.data)
         ]);
@@ -147,8 +152,13 @@ export default function ExamScheduleManager() {
       const res = await getSchedules(selectedClass, selectedExam);
       setSchedules(res.data);
       resetForm();
+      setDialogMsg(editId ? 'Schedule updated successfully.' : 'Schedule added successfully.');
+      setDialogType('success');
+      setDialogOpen(true);
     } catch (err) {
-      setError(err.message || 'Operation failed');
+      setDialogMsg(err.message || 'Operation failed');
+      setDialogType('error');
+      setDialogOpen(true);
     }
   };
 
@@ -162,14 +172,32 @@ export default function ExamScheduleManager() {
     });
   };
 
-  const handleDelete = async id => {
-    if (!window.confirm('Are you sure you want to delete this schedule?')) return;
+  // Show confirmation dialog instead of window.confirm
+  const handleDelete = (id) => {
+    setPendingDeleteId(id);
+    setDialogMsg('Are you sure you want to delete this schedule? This action cannot be undone.');
+    setDialogType('confirm');
+    setDialogOpen(true);
+  };
+
+  // Actual deletion logic
+  const confirmDelete = async () => {
+    setDialogOpen(false);
+    setIsLoading(true);
     try {
-      await deleteSchedule(id);
+      await deleteSchedule(pendingDeleteId);
       const res = await getSchedules(selectedClass, selectedExam);
       setSchedules(res.data);
+      setDialogMsg('Schedule deleted successfully.');
+      setDialogType('success');
+      setDialogOpen(true);
     } catch (err) {
-      setError(err.message);
+      setDialogMsg(err.message || 'Failed to delete schedule');
+      setDialogType('error');
+      setDialogOpen(true);
+    } finally {
+      setIsLoading(false);
+      setPendingDeleteId(null);
     }
   };
 
@@ -230,6 +258,7 @@ export default function ExamScheduleManager() {
         </div>
       )}
 
+      {/* Schedule Form and Table */}
       {selectedExam && (
         <>
           <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 mb-4">
@@ -354,6 +383,49 @@ export default function ExamScheduleManager() {
           </table>
         </>
       )}
+
+      {/* Dialog for Confirmation and Feedback */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {dialogType === 'confirm'
+                ? 'Confirm Deletion'
+                : dialogType === 'success'
+                ? 'Success'
+                : dialogType === 'error'
+                ? 'Error'
+                : 'Info'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">{dialogMsg}</div>
+          <DialogFooter>
+            {dialogType === 'confirm' ? (
+              <>
+                <button
+                  onClick={() => setDialogOpen(false)}
+                  className="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                >
+                  Yes, Delete
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setDialogOpen(false)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              >
+                OK
+              </button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
