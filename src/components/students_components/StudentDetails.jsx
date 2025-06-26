@@ -6,6 +6,14 @@ const maskAadhaar = (aadhaar) =>
     ? `XXXX-XXXX-${aadhaar.slice(-4)}`
     : aadhaar || "-";
 
+function toDateInputValue(dateString) {
+  if (!dateString) return "";
+  // If already in YYYY-MM-DD, return as is
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
+  // If ISO string, just take the first 10 chars
+  return dateString.slice(0, 10);
+}
+
 const isValidAadhaar = (value) => /^\d{12}$/.test(value);
 const isValidMobile = (value) => /^[6-9]\d{9}$/.test(value);
 const isValidPincode = (value) => /^\d{6}$/.test(value);
@@ -55,7 +63,7 @@ const StudentDetails = ({
               <input
                 id="dob"
                 type="date"
-                value={editData.dob}
+                value={toDateInputValue(editData.dob)}
                 onChange={e => handleEditChange("dob", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -398,7 +406,7 @@ const StudentDetails = ({
               <input
                 id="admission_date"
                 type="date"
-                value={editData.admission_date}
+                value={toDateInputValue(editData.admission_date)}
                 onChange={e => handleEditChange("admission_date", e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required

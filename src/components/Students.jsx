@@ -84,9 +84,10 @@ const Students = () => {
   // Format date for input (YYYY-MM-DD)
   const formatDateForInput = (dateString) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    if (isNaN(date)) return "";
-    return date.toISOString().split("T")[0];
+    // If already in YYYY-MM-DD, return as is
+    if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) return dateString;
+    // If ISO string, just take the first 10 chars (no timezone conversion)
+    return dateString.slice(0, 10);
   };
 
   // Start editing
