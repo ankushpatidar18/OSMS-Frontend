@@ -2,7 +2,7 @@ import React from 'react';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { LOGO_BASE64 } from '@/assets/base64';
-import { Button } from "@/components/ui/button"; // Use your UI Button if available
+import { Button } from "@/components/ui/button"; 
 
 const SCHOOL_INFO = {
   name: `MATRA KRIPA EDUCATION POINT`,
@@ -130,11 +130,11 @@ export default function AdmitCardPreview({ data }) {
     <div className="mt-6">
       <Button
         aria-label="Download Admit Cards PDF"
-        className="bg-green-600 text-white px-4 py-2 rounded"
+        className="bg-green-600 text-white px-4 py-2 rounded w-full sm:w-auto"
         onClick={generatePDF}
         disabled={!students || students.length === 0}
       >
-        Download Admit Cards PDF ({students.length} students)
+        Download Admit Cards({students.length} students)
       </Button>
       <div className="mt-4 text-gray-600">
         <p>

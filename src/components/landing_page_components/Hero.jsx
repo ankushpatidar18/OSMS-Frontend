@@ -14,15 +14,7 @@ export default function Hero() {
               className="w-full h-96 object-cover rounded-lg shadow-xl"
               loading="eager"
             />
-            <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-lg shadow-lg">
-              <div className="flex items-center space-x-2">
-                <Award className="h-8 w-8 text-yellow-500" aria-hidden="true" />
-                <div>
-                  <p className="font-semibold text-sm">MP Board Affiliated</p>
-                  <p className="text-xs text-gray-600">Since 2016</p>
-                </div>
-              </div>
-            </div>
+  
           </div>
 
           {/* School Information */}

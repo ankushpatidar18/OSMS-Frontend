@@ -114,7 +114,7 @@ export default function MarksEntryMatrix() {
   };
 
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-2 space-y-6">
       <Card>
         <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4">
           <Select onValueChange={setSelectedSession} value={selectedSession}>
@@ -140,17 +140,23 @@ export default function MarksEntryMatrix() {
           </Select>
 
           <Select onValueChange={setSelectedStudent} value={selectedStudent}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select Student" />
-            </SelectTrigger>
-            <SelectContent>
-              {students.map(std => (
-                <SelectItem key={std.student_id} value={std.student_id}>
-                  {std.roll_number}. {std.name} ({std.father_name})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+  <SelectTrigger>
+    <SelectValue placeholder="Select Student" />
+  </SelectTrigger>
+  <SelectContent>
+    {students.map(std => (
+      <SelectItem key={std.student_id} value={std.student_id} className="truncate">
+        <span className="truncate max-w-[150px] inline-block">
+          {std.roll_number}. {std.name}
+        </span>
+        <span className="hidden sm:inline">
+          {' '}({std.father_name})
+        </span>
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
+
         </CardContent>
       </Card>
 

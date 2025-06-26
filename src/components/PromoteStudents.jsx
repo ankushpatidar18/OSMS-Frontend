@@ -215,7 +215,7 @@ export default function PromoteStudents() {
       {session && selectedClass && (
         <Card>
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap">
               <CardTitle className="text-lg">Students List</CardTitle>
               {students.length > 0 && (
                 <div className="flex items-center gap-3">
@@ -296,7 +296,7 @@ export default function PromoteStudents() {
       {/* Promote Button */}
       {students.length > 0 && (
         <div className="sticky bottom-4 bg-white border rounded-lg shadow-lg p-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap">
             <div className="text-sm text-muted-foreground" aria-live="polite">
               {selectedIds.length > 0 
                 ? `${selectedIds.length} student(s) selected for promotion`

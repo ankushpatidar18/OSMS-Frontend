@@ -35,11 +35,11 @@ export default function MarksTable({ marksData, handleMarkChange, isLoading }) {
             </td>
             <td className="border px-4 py-2">
               <Input
-                type="number"
+                // type="number"
                 value={row.marks_obtained ?? ""}
                 onChange={(e) => handleMarkChange(row.student_id, e.target.value)}
                 className="w-24 px-2 py-1 border rounded"
-                min="0"
+                // min="0"
                 aria-label={`Enter marks for ${row.name}`}
                 placeholder="Marks"
                 inputMode="numeric"

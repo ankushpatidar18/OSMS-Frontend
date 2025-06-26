@@ -304,7 +304,7 @@ export default function MarksheetPreview({ students, selectedClass, session }) {
     <div className="mt-6">
       <Button
         aria-label="Download Marksheet PDF"
-        className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium"
+        className="flex items-center gap-2 px-2 py-2 rounded-lg font-medium w-full sm:w-auto text-xs"
         onClick={generatePDF}
         disabled={!students || students.length === 0 || loading}
       >
@@ -316,7 +316,7 @@ export default function MarksheetPreview({ students, selectedClass, session }) {
         ) : (
           <>
             <Download className="w-4 h-4" />
-            Download Marksheet PDF ({students.length} students)
+            Download Marksheet({students.length} students)
           </>
         )}
       </Button>

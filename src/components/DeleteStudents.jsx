@@ -187,10 +187,10 @@ export default function DeleteStudents() {
       {session && selectedClass && (
         <Card>
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between flex-wrap">
               <CardTitle className="text-lg">Students List</CardTitle>
               {students.length > 0 && (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <span className="text-sm text-muted-foreground">
                     {selectedIds.length} of {students.length} selected
                   </span>
@@ -266,7 +266,7 @@ export default function DeleteStudents() {
       {/* Fixed Delete Button */}
       {students.length > 0 && (
         <div className="sticky bottom-4 bg-white border rounded-lg shadow-lg p-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap">
             <div className="text-sm text-muted-foreground">
               {selectedIds.length > 0 
                 ? `${selectedIds.length} student(s) selected for deletion`
