@@ -150,10 +150,10 @@ const UploadStudents = () => {
                 <div className="space-y-2">
                   <p className="text-sm font-medium text-green-700">File Selected:</p>
                   <div className="bg-white border border-green-200 rounded-md p-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                    <div className="flex items-center justify-between flex-wrap">
+                      <div className="flex flex-wrap items-center space-x-2">
                         <FileSpreadsheet className="h-5 w-5 text-green-600" />
-                        <span className="text-sm font-medium text-gray-700">{file.name}</span>
+                        <span className="text-xs font-medium text-gray-700">{file.name}</span>
                       </div>
                       <span className="text-xs text-gray-500">{formatFileSize(file.size)}</span>
                     </div>
