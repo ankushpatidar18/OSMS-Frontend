@@ -44,7 +44,7 @@ export default function PromoteStudents() {
       setLoading(true);
       axios
         .get(
-          `${ApiUrl}/students/filter?session=${session}&class=${selectedClass}`,
+          `${ApiUrl}/students/delete/filter?session=${session}&class=${selectedClass}`,
           { withCredentials: true }
         )
         .then((res) => {
@@ -117,7 +117,7 @@ export default function PromoteStudents() {
       setLoading(true);
       axios
         .get(
-          `${ApiUrl}/students/filter?session=${session}&class=${selectedClass}`,
+          `${ApiUrl}/students/delete/filter?session=${session}&class=${selectedClass}`,
           { withCredentials: true }
         )
         .then((res) => setStudents(Array.isArray(res.data) ? res.data : []))

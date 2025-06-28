@@ -182,9 +182,11 @@ export default function MarksEntryMatrix() {
                         aria-label={`Marks for ${subject.subject_name} in ${exam.name}`}
                         value={marks[`${subject.class_subject_id}-${exam.exam_id}`] || ''}
                         onChange={e => handleInput(subject.class_subject_id, exam.exam_id, e.target.value)}
-                        type="number"
-                        min="0"
-                        max={exam.total_marks}
+                        // type="number"
+                        // min="0"
+                        // max={exam.total_marks}
+                //         inputMode="numeric"
+                // pattern="[0-9]*"
                       />
                     </td>
                   ))}

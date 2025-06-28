@@ -42,8 +42,8 @@ export default function MarksTable({ marksData, handleMarkChange, isLoading }) {
                 // min="0"
                 aria-label={`Enter marks for ${row.name}`}
                 placeholder="Marks"
-                inputMode="numeric"
-                pattern="[0-9]*"
+                // inputMode="numeric"
+                // pattern="[0-9]*"
               />
             </td>
           </tr>

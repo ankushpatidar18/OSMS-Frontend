@@ -57,7 +57,7 @@ const UploadStudents = () => {
 
     try {
       const response = await axios.post(
-        `${ApiUrl}/upload-students`,
+        `${ApiUrl}/upload/students`,
         formData,
         { withCredentials: true }
       )

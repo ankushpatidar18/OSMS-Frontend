@@ -39,7 +39,7 @@ export default function DeleteStudents() {
       setLoading(true);
       axios
         .get(
-          `${ApiUrl}/students/filter?session=${session}&class=${selectedClass}`,
+          `${ApiUrl}/students/delete/filter?session=${session}&class=${selectedClass}`,
           { withCredentials: true }
         )
         .then((res) => {
@@ -87,7 +87,7 @@ export default function DeleteStudents() {
     setLoading(true);
     try {
       await axios.delete(
-        `${ApiUrl}/students/delete-many`,
+        `${ApiUrl}/students/delete/delete-many`,
         {
           data: { studentIds: selectedIds },
           withCredentials: true
