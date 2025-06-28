@@ -72,7 +72,6 @@ const UploadStudents = () => {
           (error.response?.data?.message ||
             "Error uploading file. Backend might be down.")
       )
-      console.error("Upload error:", error)
     } finally {
       setIsUploading(false)
     }

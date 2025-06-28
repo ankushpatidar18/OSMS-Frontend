@@ -42,10 +42,10 @@ export default function AddStudentForm() {
       setDialogOpen(true)
       setFormData({})
     } catch (err) {
-      setDialogMsg("Error registering student. Please try again.")
+      setDialogMsg("Error registering student. Please try again." + err.message)
       setIsSuccess(false)
       setDialogOpen(true)
-      console.error(err)
+     
     }
   }
 

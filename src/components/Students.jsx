@@ -45,8 +45,7 @@ const Students = () => {
       );
       setStudents(response.data);
     } catch (error) {
-      setError("Failed to fetch students. Please try again later.");
-      console.error("Error fetching students:", error);
+      setError("Failed to fetch students. Please try again later." + error.message);
     } finally {
       setLoading(false);
     }
@@ -150,8 +149,7 @@ const Students = () => {
         throw new Error("Failed to update student");
       }
     } catch (error) {
-      setError("Error updating student data. Please try again.");
-      console.error("Error updating student:", error);
+      setError("Error updating student data. Please try again." + error.message);
     } finally {
       setLoading(false);
     }
