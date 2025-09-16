@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Link, useNavigate } from "react-router-dom"
-import { useDispatch, useSelector } from "react-redux"
-import { clearAdminInfo } from "@/redux/slices/adminSlice"
+import { useState, useRef, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { clearUserInfo } from "@/redux/slices/userSlice";
 import {
   Dialog,
   DialogContent,
@@ -10,58 +10,76 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import mkeplogo from "@/assets/mkeplogo.png"
-import axios from "axios"
-import { Menu, X, ChevronDown, AlertCircle } from "lucide-react"
+} from "@/components/ui/dialog";
+import mkeplogo from "@/assets/mkeplogo.png";
+import axios from "axios";
+import { Menu, X, ChevronDown, AlertCircle } from "lucide-react";
 
-const ApiUrl = import.meta.env.VITE_BASE_URL
+const ApiUrl = import.meta.env.VITE_BASE_URL;
 
 export default function Header() {
-  const [showRoles, setShowRoles] = useState(false)
-  const [showMobileMenu, setShowMobileMenu] = useState(false)
-  const [showErrorDialog, setShowErrorDialog] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
-  const dropdownRef = useRef(null)
-  const mobileMenuRef = useRef(null)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const admin = useSelector((state) => state.admin.adminInfo)
+  const [showRoles, setShowRoles] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const dropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.userInfo);
 
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowRoles(false)
+        setShowRoles(false);
       }
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
-        setShowMobileMenu(false)
+        setShowMobileMenu(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = async () => {
     try {
-      const res = await axios.post(`${ApiUrl}/admin/logout`, {}, { withCredentials: true })
+      const res = await axios.post(`${ApiUrl}/user/logout`, {}, { withCredentials: true });
       if (res.status === 200) {
-        dispatch(clearAdminInfo())
-        navigate("/")
+        dispatch(clearUserInfo());
+        navigate("/");
       }
     } catch (err) {
-      setErrorMessage("Failed to logout. Please check your connection and try again." + err.message)
-      setShowErrorDialog(true)
+      setErrorMessage("Failed to logout. Please check your connection and try again." + err.message);
+      setShowErrorDialog(true);
     }
-  }
+  };
 
   const closeMobileMenu = () => {
-    setShowMobileMenu(false)
-  }
+    setShowMobileMenu(false);
+  };
 
   const closeErrorDialog = () => {
-    setShowErrorDialog(false)
-    setErrorMessage("")
-  }
+    setShowErrorDialog(false);
+    setErrorMessage("");
+  };
+
+ 
+  const getDashboardLink = () => {
+    if (!user) return null;
+    if (user.role === "admin") return "/admin/dashboard";
+    if (user.role === "teacher") return "/teacher/dashboard";
+    if (user.role === "student") return "/student/dashboard";
+    return "/";
+  };
+
+ 
+  const getDashboardLabel = () => {
+    if (!user) return "";
+    if (user.role === "admin") return "Admin Dashboard";
+    if (user.role === "teacher") return "Teacher Dashboard";
+    if (user.role === "student") return "Student Dashboard";
+    return "Dashboard";
+  };
 
   return (
     <>
@@ -75,7 +93,6 @@ export default function Header() {
                 alt="Matra Kripa Education Point Logo"
                 className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full object-cover"
               />
-              {/* Hide text on mobile, show on sm and up */}
               <div className="hidden sm:block">
                 <h1 className="text-base sm:text-lg lg:text-xl font-bold text-blue-800">Matra Kripa Education Point</h1>
                 <p className="text-xs text-gray-600">Excellence in Education</p>
@@ -96,25 +113,24 @@ export default function Header() {
               <a href="/#features" className="text-gray-700 hover:text-blue-600 transition-colors duration-200">
                 Facility
               </a>
-              
             </div>
 
             {/* Desktop Action Buttons */}
             <div className="hidden md:flex items-center space-x-3 relative" ref={dropdownRef}>
-              {/* Show Contact button only if not admin, otherwise show Dashboard */}
-              {!admin ? (
+              {/* Show Contact button only if not logged in, otherwise show Dashboard */}
+              {!user ? (
                 <Button variant="outline" size="sm" className="hover:bg-gray-50 transition-colors duration-200">
                   Contact
                 </Button>
               ) : (
-                <Link to="/admin/dashboard">
+                <Link to={getDashboardLink()}>
                   <Button variant="outline" size="sm" className="hover:bg-gray-50 transition-colors duration-200">
-                    Dashboard
+                    {getDashboardLabel()}
                   </Button>
                 </Link>
               )}
 
-              {!admin ? (
+              {!user ? (
                 <Button
                   size="sm"
                   className="bg-blue-600 hover:bg-blue-700 transition-colors duration-200 flex items-center gap-1"
@@ -149,25 +165,31 @@ export default function Header() {
                     className="w-full text-left justify-start hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
                     role="menuitem"
                     onClick={() => {
-                      navigate("/admin/login")
-                      setShowRoles(false)
+                      navigate("/login?role=admin");
+                      setShowRoles(false);
                     }}
                   >
                     Admin
                   </Button>
                   <Button
                     variant="ghost"
-                    className="w-full text-left justify-start opacity-50 cursor-not-allowed"
+                    className="w-full text-left justify-start hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
                     role="menuitem"
-                    disabled
+                    onClick={() => {
+                      navigate("/login?role=teacher");
+                      setShowRoles(false);
+                    }}
                   >
                     Teacher
                   </Button>
                   <Button
                     variant="ghost"
-                    className="w-full text-left justify-start opacity-50 cursor-not-allowed"
+                    className="w-full text-left justify-start hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
                     role="menuitem"
-                    disabled
+                    onClick={() => {
+                      navigate("/login?role=student");
+                      setShowRoles(false);
+                    }}
                   >
                     Student
                   </Button>
@@ -226,13 +248,12 @@ export default function Header() {
                   >
                     Facility
                   </a>
-                    
                 </div>
 
                 {/* Mobile Action Buttons */}
                 <div className="pt-3 border-t border-gray-200 space-y-2">
-                  {/* Show Contact button only if not admin, otherwise show Dashboard */}
-                  {!admin ? (
+                  {/* Show Contact button only if not logged in, otherwise show Dashboard */}
+                  {!user ? (
                     <Button
                       variant="outline"
                       className="w-full justify-center hover:bg-gray-50 transition-colors duration-200"
@@ -241,42 +262,56 @@ export default function Header() {
                       Contact
                     </Button>
                   ) : (
-                    <Link to="/admin/dashboard" className="block" onClick={closeMobileMenu}>
+                    <Link to={getDashboardLink()} className="block" onClick={closeMobileMenu}>
                       <Button
                         variant="outline"
                         className="w-full justify-center hover:bg-gray-50 transition-colors duration-200"
                       >
-                        Dashboard
+                        {getDashboardLabel()}
                       </Button>
                     </Link>
                   )}
 
-                  {!admin ? (
+                  {!user ? (
                     <div className="space-y-2">
                       <div className="text-xs font-medium text-gray-500 px-3">Login as:</div>
                       <Button
                         variant="outline"
                         className="w-full justify-center hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
                         onClick={() => {
-                          navigate("/admin/login")
-                          closeMobileMenu()
+                          navigate("/login?role=admin");
+                          closeMobileMenu();
                         }}
                       >
                         Admin
                       </Button>
-                      <Button variant="outline" className="w-full justify-center opacity-50 cursor-not-allowed" disabled>
-                        Teacher (Coming Soon)
+                      <Button
+                        variant="outline"
+                        className="w-full justify-center hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+                        onClick={() => {
+                          navigate("/login?role=teacher");
+                          closeMobileMenu();
+                        }}
+                      >
+                        Teacher
                       </Button>
-                      <Button variant="outline" className="w-full justify-center opacity-50 cursor-not-allowed" disabled>
-                        Student (Coming Soon)
+                      <Button
+                        variant="outline"
+                        className="w-full justify-center hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+                        onClick={() => {
+                          navigate("/login?role=student");
+                          closeMobileMenu();
+                        }}
+                      >
+                        Student
                       </Button>
                     </div>
                   ) : (
                     <Button
                       className="w-full justify-center bg-red-600 hover:bg-red-700 transition-colors duration-200"
                       onClick={() => {
-                        handleLogout()
-                        closeMobileMenu()
+                        handleLogout();
+                        closeMobileMenu();
                       }}
                     >
                       Logout
@@ -305,10 +340,10 @@ export default function Header() {
             <Button variant="outline" onClick={closeErrorDialog}>
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={() => {
-                closeErrorDialog()
-                handleLogout() // Retry logout
+                closeErrorDialog();
+                handleLogout();
               }}
               className="bg-blue-600 hover:bg-blue-700"
             >
@@ -318,5 +353,5 @@ export default function Header() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

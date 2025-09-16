@@ -1,17 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Suspense, lazy, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setAdminChecked, setAdminInfo } from "@/redux/slices/adminSlice";
+import { setUserInfo, setUserChecked } from "@/redux/slices/userSlice";
 import axios from "axios";
 
-// Eagerly loaded components (as per your instruction)
+
 import Hero from "./landing_page_components/Hero";
 import About from "./landing_page_components/About";
 import Admission from "./landing_page_components/Admission";
 import Features from "./landing_page_components/Features";
-import AdminLoginForm from "./AdminLoginForm";
+import LoginForm from "./LoginForm";
 import AppErrorBoundary from "./AppErrorBoundary";
 import NotFoundPage from "./NotFoundPage";
+import TeacherDashboard from "./TeacherDashboard";
 
 
 // Lazy loaded components
@@ -21,7 +22,7 @@ const UploadStudents = lazy(() => import("./UploadStudents"));
 const Students = lazy(() => import("./Students"));
 const MarksheetGenerator = lazy(() => import("./MarksheetGenerator"));
 const MarkEntryPage = lazy(() => import("./MarkEntryPage"));
-const RequireAdmin = lazy(() => import("./RequireAdmin"));
+const RequireRole = lazy(() => import("./RequireRole"));
 const AddStudentForm = lazy(() => import("./AddStudentForm"));
 const DeleteStudents = lazy(() => import("./DeleteStudents"));
 const MarksEntryMatrix = lazy(() => import("./MarkEntryMatrix"));
@@ -54,16 +55,16 @@ const appRouter = createBrowserRouter([
         ),
       },
       {
-        path: "/admin/login",
-        element: <AdminLoginForm />, // Eagerly loaded
+        path: "/login",
+        element: <LoginForm />, // Eagerly loaded
       },
       {
         path: "/admin/dashboard",
         element: (
-           <Suspense fallback={<div>Loading dashboard...</div>}>
-            <RequireAdmin>
+          <Suspense fallback={<div>Loading dashboard...</div>}>
+            <RequireRole allowedRoles={["admin"]}>
               <AdminDashboard />
-            </RequireAdmin>
+            </RequireRole>
           </Suspense>
         ),
         children: [
@@ -169,6 +170,38 @@ const appRouter = createBrowserRouter([
           },
         ],
       },
+       {
+    path: "/teacher/dashboard",
+    element: (
+      <Suspense fallback={<div>Loading dashboard...</div>}>
+        <RequireRole allowedRoles={["teacher"]}>
+          <TeacherDashboard />
+        </RequireRole>
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "mark-entry",
+        element: (
+          <AppErrorBoundary>
+            <Suspense fallback={<div>Loading mark entry...</div>}>
+              <MarkEntryPage />
+            </Suspense>
+          </AppErrorBoundary>
+        ),
+      },
+      {
+        path: "mark-entry-matrix",
+        element: (
+          <AppErrorBoundary>
+            <Suspense fallback={<div>Loading mark entry matrix...</div>}>
+              <MarksEntryMatrix />
+            </Suspense>
+          </AppErrorBoundary>
+        ),
+      },
+    ],
+  },
       {
         path: "*",
         element: <NotFoundPage />,
@@ -182,17 +215,17 @@ const Main = () => {
 
   useEffect(() => {
     axios
-      .get(`${ApiUrl}/admin/me`, { withCredentials: true })
+      .get(`${ApiUrl}/user/me`, { withCredentials: true })
       .then((res) => {
         const data = res.data;
-        if (data && data.admin) {
-          dispatch(setAdminInfo(data.admin));
+        if (data && data.user) {
+          dispatch(setUserInfo(data.user));
         } else {
-          dispatch(setAdminChecked(true));
+          dispatch(setUserChecked(true));
         }
       })
       .catch(() => {
-        dispatch(setAdminChecked(true));
+        dispatch(setUserChecked(true));
       });
   }, [dispatch]);
 

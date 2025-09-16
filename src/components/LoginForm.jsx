@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setAdminInfo } from "@/redux/slices/adminSlice";
+import { setUserInfo } from "@/redux/slices/userSlice";
 import axios from "axios";
 const ApiUrl = import.meta.env.VITE_BASE_URL;
 
-export default function AdminLoginForm() {
+export default function LoginForm() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const role = params.get("role");
+  const safeRole = role ? role : "admin";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,14 +29,17 @@ export default function AdminLoginForm() {
 
     try {
       const res = await axios.post(
-        `${ApiUrl}/admin/login`,
-        { email, password },
+        `${ApiUrl}/user/login`,
+        { email, password, role: safeRole }, 
         { withCredentials: true }
       );
       const data = res.data;
-
-      dispatch(setAdminInfo(data.admin));
-      navigate("/admin/dashboard");
+      dispatch(setUserInfo(data.user));
+      // Redirect based on role
+      if (data.user.role === "admin") navigate("/admin/dashboard");
+      else if (data.user.role === "teacher") navigate("/teacher/dashboard");
+      else if (data.user.role === "student") navigate("/student/dashboard");
+      else navigate("/");
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -45,16 +53,16 @@ export default function AdminLoginForm() {
   return (
     <div className="max-w-sm mx-auto mt-10 bg-white shadow-md rounded-lg p-6 border">
       <h2 className="text-2xl font-bold text-center mb-4 text-blue-700">
-        Admin Login
+        {safeRole.charAt(0).toUpperCase() + safeRole.slice(1)} Login
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="admin-email" className="block text-sm font-medium mb-1">
+          <label htmlFor="login-email" className="block text-sm font-medium mb-1">
             Email
           </label>
           <input
-            id="admin-email"
+            id="login-email"
             type="email"
             className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={email}
@@ -65,11 +73,11 @@ export default function AdminLoginForm() {
         </div>
 
         <div>
-          <label htmlFor="admin-password" className="block text-sm font-medium mb-1">
+          <label htmlFor="login-password" className="block text-sm font-medium mb-1">
             Password
           </label>
           <input
-            id="admin-password"
+            id="login-password"
             type="password"
             className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={password}

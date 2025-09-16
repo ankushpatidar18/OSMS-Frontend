@@ -1,5 +1,3 @@
-"use client"
-
 import { NavLink, Outlet } from "react-router-dom"
 import {
   Upload,
