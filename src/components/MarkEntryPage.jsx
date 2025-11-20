@@ -83,7 +83,7 @@ export default function MarkEntryPage() {
         <MarksTable
           marksData={marksData.map((md) => {
             const student = students.find((s) => s.student_id === md.student_id);
-            return { ...md, name: student ? student.name : "", dob: student ? student.dob : "" };
+            return { ...md, name: student ? student.name : "", dob: student ? student.dob : "", roll_number: student ? student.roll_number : "" };
           })}
           handleMarkChange={handleMarkChange}
           isLoading={isLoading}
