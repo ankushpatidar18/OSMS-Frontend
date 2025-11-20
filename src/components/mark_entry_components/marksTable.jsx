@@ -21,7 +21,7 @@ export default function MarksTable({ marksData, handleMarkChange, isLoading }) {
     <table className="min-w-full border mt-4" aria-label="Marks Entry Table">
       <thead>
         <tr>
-          <th className="border px-4 py-2">Student ID</th>
+          <th className="border px-4 py-2">Roll Number</th>
           <th className="border px-4 py-2">Name (DOB)</th>
           <th className="border px-4 py-2">Marks Obtained</th>
         </tr>
@@ -29,7 +29,7 @@ export default function MarksTable({ marksData, handleMarkChange, isLoading }) {
       <tbody>
         {marksData.map((row) => (
           <tr key={row.student_id}>
-            <td className="border px-4 py-2">{row.student_id}</td>
+            <td className="border px-4 py-2">{row.roll_number}</td>
             <td className="border px-4 py-2">
               {row.name} ({formatDOB(row.dob)})
             </td>
