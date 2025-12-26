@@ -33,6 +33,27 @@ export default function AdmitCardGenerator() {
       .finally(() => setFetchingDropdowns(false));
   }, []);
 
+  // helper: compute class_group from selectedClass
+  const computeClassGroup = (cls) => {
+    if (!cls) return null;
+    const n = parseInt(String(cls).replace(/\D/g, ''), 10);
+    if (!isNaN(n) && [6, 7, 8].includes(n)) return 'primary';
+    return 'middle';
+  };
+
+  // Clear selected exam when session or class changes
+  useEffect(() => {
+    setSelectedExam(''); // reset exam when session or class changes
+  }, [selectedSession, selectedClass]);
+
+  // derive filtered exams based on selectedSession AND selectedClass -> class_group
+  const classGroupForFilter = computeClassGroup(selectedClass);
+  const filteredExams = exams.filter(e => {
+    const matchesSession = selectedSession ? String(e.session) === String(selectedSession) : true;
+    const matchesClassGroup = classGroupForFilter ? String(e.class_group).toLowerCase() === String(classGroupForFilter).toLowerCase() : true;
+    return matchesSession && matchesClassGroup;
+  });
+
   // Handle admit card generation
   const handleGenerate = async (e) => {
     e?.preventDefault();
@@ -95,20 +116,23 @@ export default function AdmitCardGenerator() {
           </Select>
         </div>
 
-        {/* Exam Dropdown */}
+        {/* Exam Dropdown (filtered by selectedSession and class_group computed from class) */}
         <div className="flex-1 min-w-[160px]">
           <label className="block text-sm font-medium mb-1">Exam<span className="text-red-500">*</span></label>
           <Select
             value={selectedExam}
             onValueChange={setSelectedExam}
-            disabled={fetchingDropdowns}
+            disabled={fetchingDropdowns || filteredExams.length === 0}
             required
           >
             <SelectTrigger>
-              <SelectValue placeholder={fetchingDropdowns ? "Loading..." : "Select Exam"} />
+              <SelectValue placeholder={
+                fetchingDropdowns ? "Loading..." :
+                (selectedSession ? (filteredExams.length ? "Select Exam" : "No exams for selected session/class") : "Select Session first")
+              } />
             </SelectTrigger>
             <SelectContent>
-              {exams.map(e => (
+              {filteredExams.map(e => (
                 <SelectItem key={e.exam_id} value={e.exam_id}>
                   {e.name} ({e.session}) ({e.class_group})
                 </SelectItem>
