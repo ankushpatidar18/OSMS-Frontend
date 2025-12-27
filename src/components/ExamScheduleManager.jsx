@@ -28,6 +28,8 @@ export default function ExamScheduleManager() {
   const [classes, setClasses] = useState([])
   const [selectedClass, setSelectedClass] = useState("")
   const [exams, setExams] = useState([])
+  const [yearOptions, setYearOptions] = useState([])
+  const [selectedYear, setSelectedYear] = useState("")
   const [selectedExam, setSelectedExam] = useState("")
   const [schedules, setSchedules] = useState([])
   const [subjects, setSubjects] = useState([])
@@ -71,6 +73,7 @@ export default function ExamScheduleManager() {
       setExams([])
       setSubjects([])
       setSelectedExam("")
+      setSelectedYear("")
       return
     }
     const fetchInitialData = async () => {
@@ -82,7 +85,29 @@ export default function ExamScheduleManager() {
             .get(`${ApiUrl}/subjects/for-class/${encodeURIComponent(selectedClass)}`, { withCredentials: true })
             .then((res) => res.data),
         ])
-        setExams(examsRes.data)
+        // Parse exams to extract year (e.g., (2024-2025)) and class_group (e.g., middle)
+        const extractYear = (text, fallback) => {
+          const match = (text || "").match(/\((\d{4}-\d{4})\)/)
+          return match ? match[1] : fallback || ""
+        }
+        const extractClassGroup = (text, fallback) => {
+          const m = (text || "").match(/(middle|primary|secondary|higher)/i)
+          return m ? m[1].toLowerCase() : (fallback || "")
+        }
+
+        const parsed = (examsRes.data || []).map((e) => {
+          const yearFromName = extractYear(e.name || e.session || "", e.session || "")
+          const cgFromName = extractClassGroup(e.name || "", e.class_group || "") || (e.class_group || "")
+          return {
+            ...e,
+            exam_year: yearFromName,
+            exam_class_group: cgFromName,
+          }
+        })
+        setExams(parsed)
+        // build unique year options from parsed exams
+        const years = Array.from(new Set(parsed.map((p) => p.exam_year).filter(Boolean)))
+        setYearOptions(years)
         setSubjects(subjectsRes)
       } catch (err) {
         setError(err.message)
@@ -112,6 +137,12 @@ export default function ExamScheduleManager() {
     }
     fetchSchedulesData()
   }, [selectedExam, selectedClass])
+
+  const getClassGroupForClass = (className) => {
+    const n = Number(className)
+    if (!isNaN(n) && n >= 6 && n <= 8) return "middle"
+    return "primary"
+  }
 
   const resetForm = () => {
     setForm({
@@ -301,16 +332,49 @@ export default function ExamScheduleManager() {
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6">
+              {/* Year selector (appears after class selected when exams provide years) */}
+              {selectedClass && yearOptions.length > 0 && (
+                <div className="mb-4">
+                  <label className="text-sm font-semibold text-gray-700 block mb-2">Year</label>
+                  <Select
+                    value={selectedYear}
+                    onValueChange={(value) => {
+                      setSelectedYear(value)
+                      setSelectedExam("")
+                      setSchedules([])
+                    }}
+                  >
+                    <SelectTrigger className="h-12 border-gray-300 focus:border-indigo-500">
+                      <SelectValue placeholder="Choose year (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All years</SelectItem>
+                      {yearOptions.map((y) => (
+                        <SelectItem key={y} value={y}>
+                          {y}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <Select value={selectedExam} onValueChange={setSelectedExam} disabled={!selectedClass}>
                 <SelectTrigger className="h-12 border-gray-300 focus:border-indigo-500 disabled:bg-gray-100">
                   <SelectValue placeholder={selectedClass ? "Choose an exam" : "Select class first"} />
                 </SelectTrigger>
                 <SelectContent>
-                  {exams.map((e) => (
-                    <SelectItem key={e.exam_id} value={e.exam_id}>
-                      {e.name} ({e.session}){e.class_group}
-                    </SelectItem>
-                  ))}
+                  {exams
+                    .filter((e) => {
+                      const classGroup = getClassGroupForClass(selectedClass)
+                      const matchesGroup = (e.exam_class_group || e.class_group || "").toLowerCase() === classGroup
+                      const matchesYear = !selectedYear || selectedYear === "ALL" || (e.exam_year === selectedYear)
+                      return matchesGroup && matchesYear
+                    })
+                    .map((e) => (
+                      <SelectItem key={e.exam_id} value={e.exam_id}>
+                        {e.name} {e.exam_year ? `(${e.exam_year})` : `(${e.session || ""})`}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </CardContent>

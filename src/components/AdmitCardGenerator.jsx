@@ -37,8 +37,8 @@ export default function AdmitCardGenerator() {
   const computeClassGroup = (cls) => {
     if (!cls) return null;
     const n = parseInt(String(cls).replace(/\D/g, ''), 10);
-    if (!isNaN(n) && [6, 7, 8].includes(n)) return 'primary';
-    return 'middle';
+    if (!isNaN(n) && [6, 7, 8].includes(n)) return 'middle';
+    return 'primary';
   };
 
   // Clear selected exam when session or class changes
